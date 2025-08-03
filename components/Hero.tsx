@@ -30,7 +30,10 @@ const Hero: React.FC<HeroProps> = ({ scrollToSection }) => {
                     frameBorder="0"
                     allow="autoplay; fullscreen"
                     title="Promotional Video"
-                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[142.2vh] h-[80vh] max-w-none"
+                    className="absolute top-1/2 left-1/2 w-[180vh] h-[101vh] max-w-none"
+                    style={{ 
+                        transform: 'translate(-50%, -50%) scale(1.25) translateX(-3%)' 
+                    }}
                 />
             </div>
 
