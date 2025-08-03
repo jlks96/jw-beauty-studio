@@ -17,30 +17,21 @@ const Hero: React.FC<HeroProps> = ({ scrollToSection }) => {
 
     // Using the Streamable embed URL for iframe for robust playback
     const videoEmbedSrc = "https://streamable.com/e/y7su26?autoplay=1&muted=1&loop=1&nocontrols=1";
-    const mobileBgImage = 'https://i.postimg.cc/3NVkV67g/Whats-App-Image-2025-05-12-at-10-35-29-PM-2.jpg';
 
     return (
         <section
             id="home"
-            className="text-white min-h-[60vh] md:min-h-[65vh] lg:min-h-[75vh] flex items-center justify-center py-16 relative overflow-hidden bg-[#FDF5E6]"
+            className="text-white min-h-[60vh] md:min-h-[65vh] lg:min-h-[75vh] flex items-center justify-center py-16 relative overflow-hidden bg-black"
         >
-            {/* Video and Image Background Container */}
-            <div className="absolute inset-0 z-0">
-                 {/* Desktop Video Background using iframe */}
-                <div className="hidden md:block absolute inset-0 overflow-hidden pointer-events-none bg-[#FDF5E6]">
-                    <iframe
-                        src={videoEmbedSrc}
-                        frameBorder="0"
-                        allow="autoplay; fullscreen"
-                        title="Promotional Video"
-                        className="absolute top-1/2 left-1/2 w-auto h-auto min-w-full min-h-full transform -translate-x-1/2 -translate-y-1/2 scale-150"
-                    ></iframe>
-                </div>
-                {/* Mobile Image Background */}
-                <div 
-                    className="block md:hidden w-full h-full bg-cover bg-center"
-                    style={{ backgroundImage: `url(${mobileBgImage})` }}
-                ></div>
+            {/* Video Background Container */}
+            <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+                <iframe
+                    src={videoEmbedSrc}
+                    frameBorder="0"
+                    allow="autoplay; fullscreen"
+                    title="Promotional Video"
+                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[142.2vh] h-[80vh] max-w-none"
+                />
             </div>
 
             {/* Overlay */}
