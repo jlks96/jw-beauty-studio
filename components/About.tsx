@@ -1,11 +1,38 @@
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useTranslations } from '../hooks/useTranslations';
 import { aboutCarouselImages } from '../constants';
 
 const About: React.FC = () => {
     const t = useTranslations();
     const [currentIndex, setCurrentIndex] = useState(0);
+    const sectionRef = useRef<HTMLElement>(null);
+    const [isVisible, setIsVisible] = useState(false);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setIsVisible(true);
+                    observer.disconnect(); // Fire animation only once
+                }
+            },
+            {
+                threshold: 0.15, // Trigger when 15% of the element is visible
+            }
+        );
+
+        const currentRef = sectionRef.current;
+        if (currentRef) {
+            observer.observe(currentRef);
+        }
+
+        return () => {
+            if (currentRef) {
+                observer.unobserve(currentRef);
+            }
+        };
+    }, []);
 
     const nextSlide = useCallback(() => {
         setCurrentIndex((prevIndex) => (prevIndex + 1) % aboutCarouselImages.length);
@@ -21,38 +48,40 @@ const About: React.FC = () => {
     };
 
     return (
-        <section id="about" className="py-16 md:py-24 bg-white">
+        <section id="about" ref={sectionRef} className="py-16 md:py-24 bg-white overflow-hidden">
             <div className="container mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center gap-8 md:gap-12">
-                <div className="md:w-5/12 bg-[#FDF5E6] rounded-xl shadow-lg p-4">
-                    <div className="relative overflow-hidden rounded-lg h-[450px] w-full max-w-[450px] mx-auto">
-                        {aboutCarouselImages.map((src, index) => (
-                            <div
-                                key={src}
-                                className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${index === currentIndex ? 'opacity-100' : 'opacity-0'}`}
-                            >
-                                <img
-                                    src={src}
-                                    alt={`JW Beauty Studio view ${index + 1}`}
-                                    className="w-full h-full object-cover"
-                                    loading="lazy"
-                                    decoding="async"
-                                    onError={(e) => (e.currentTarget.src = 'https://placehold.co/500x500/F5E9E2/78350F?text=Studio+View')}
-                                />
-                            </div>
-                        ))}
-                        <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2 z-10">
-                            {aboutCarouselImages.map((_, index) => (
-                                <button
-                                    key={index}
-                                    onClick={() => goToSlide(index)}
-                                    className={`w-2.5 h-2.5 rounded-full transition-colors ${currentIndex === index ? 'bg-white/90' : 'bg-white/50 hover:bg-white/70'}`}
-                                    aria-label={`Go to slide ${index + 1}`}
-                                ></button>
+                <div className={`md:w-5/12 transition-all duration-700 ease-out transform ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}`}>
+                    <div className="bg-[#FDF5E6] rounded-xl shadow-lg p-4">
+                        <div className="relative overflow-hidden rounded-lg h-[450px] w-full max-w-[450px] mx-auto">
+                            {aboutCarouselImages.map((src, index) => (
+                                <div
+                                    key={src}
+                                    className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${index === currentIndex ? 'opacity-100' : 'opacity-0'}`}
+                                >
+                                    <img
+                                        src={src}
+                                        alt={`JW Beauty Studio view ${index + 1}`}
+                                        className="w-full h-full object-cover"
+                                        loading="lazy"
+                                        decoding="async"
+                                        onError={(e) => (e.currentTarget.src = 'https://placehold.co/500x500/F5E9E2/78350F?text=Studio+View')}
+                                    />
+                                </div>
                             ))}
+                            <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2 z-10">
+                                {aboutCarouselImages.map((_, index) => (
+                                    <button
+                                        key={index}
+                                        onClick={() => goToSlide(index)}
+                                        className={`w-2.5 h-2.5 rounded-full transition-colors ${currentIndex === index ? 'bg-white/90' : 'bg-white/50 hover:bg-white/70'}`}
+                                        aria-label={`Go to slide ${index + 1}`}
+                                    ></button>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div className="md:w-7/12">
+                <div className={`md:w-7/12 transition-all duration-700 ease-out transform ${isVisible ? 'opacity-100 translate-x-0 delay-200' : 'opacity-0 translate-x-10'}`}>
                     <h2 className="text-4xl md:text-5xl font-bold text-center md:text-left text-[#78350F] font-playfair mb-6">
                         {t.aboutTitle}
                     </h2>

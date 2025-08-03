@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { GoogleGenAI } from "@google/genai";
 import { useTranslations } from '../hooks/useTranslations';
@@ -61,7 +60,8 @@ const AiAdvisor: React.FC = () => {
 
 **IMPORTANT RULES:**
 1. Keep your answers to a maximum of 3-4 sentences.
-2. **ALWAYS** include this disclaimer at the end of your response, on a new line: 'Disclaimer: This is AI-generated advice. For personalized treatment, please book a consultation.'`;
+2. If asked about the price for 'Special Packages', state that pricing varies and it is best to book a consultation for a personalized quote. For all other services, you can state the price.
+3. **ALWAYS** include this disclaimer at the end of your response, on a new line: 'Disclaimer: This is AI-generated advice. For personalized treatment, please book a consultation.'`;
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();

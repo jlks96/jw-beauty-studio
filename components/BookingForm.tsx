@@ -10,6 +10,8 @@ import { CalendarIcon } from './common/Icons';
 interface BookingFormProps {
     showModalAlert: (messageKey: string) => void;
     setIsLoading: (isLoading: boolean) => void;
+    initialServiceId: string;
+    setInitialServiceId: (id: string) => void;
 }
 
 interface FormState {
@@ -29,7 +31,7 @@ const getTodayString = () => {
 };
 
 
-const BookingForm: React.FC<BookingFormProps> = ({ showModalAlert, setIsLoading }) => {
+const BookingForm: React.FC<BookingFormProps> = ({ showModalAlert, setIsLoading, initialServiceId, setInitialServiceId }) => {
     const t = useTranslations();
     const { language } = useLanguage();
     const [formState, setFormState] = useState<FormState>({
@@ -42,6 +44,19 @@ const BookingForm: React.FC<BookingFormProps> = ({ showModalAlert, setIsLoading 
     const [feedback, setFeedback] = useState<{ message: string; color: string } | null>(null);
     const [isCalendarOpen, setIsCalendarOpen] = useState(false);
     const calendarRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (initialServiceId) {
+            const serviceToSelect = services.find(s => s.id === initialServiceId);
+            if (serviceToSelect) {
+                const serviceTitle = t[serviceToSelect.titleKey as keyof typeof t];
+                setFormState(prevState => ({ ...prevState, service: serviceTitle }));
+                // Reset the initial service ID so it doesn't re-trigger on re-renders,
+                // and allows the user to change their selection manually.
+                setInitialServiceId('');
+            }
+        }
+    }, [initialServiceId, setInitialServiceId, t]);
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {

@@ -4,7 +4,11 @@ import { useTranslations } from '../hooks/useTranslations';
 import { services } from '../constants';
 import ServiceCard from './ServiceCard';
 
-const Services: React.FC = () => {
+interface ServicesProps {
+    onBookService: (serviceId: string) => void;
+}
+
+const Services: React.FC<ServicesProps> = ({ onBookService }) => {
     const t = useTranslations();
 
     return (
@@ -15,7 +19,7 @@ const Services: React.FC = () => {
                 </h2>
                 <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
                     {services.map(service => (
-                        <ServiceCard key={service.id} service={service} />
+                        <ServiceCard key={service.id} service={service} onBookService={onBookService} />
                     ))}
                 </div>
             </div>

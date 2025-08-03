@@ -5,9 +5,10 @@ import { Service } from '../types';
 
 interface ServiceCardProps {
     service: Service;
+    onBookService: (serviceId: string) => void;
 }
 
-const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
+const ServiceCard: React.FC<ServiceCardProps> = ({ service, onBookService }) => {
     const t = useTranslations();
 
     const isFullWidth = service.colSpan?.includes('lg:col-span-3');
@@ -43,13 +44,27 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
 
 
     return (
-        <div className={`bg-white rounded-xl overflow-hidden shadow-lg relative transition-all duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-1.5 ${service.colSpan || ''}`}>
+        <div className={`group bg-white rounded-xl overflow-hidden shadow-lg relative transition-all duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-1.5 ${service.colSpan || ''}`}>
             {service.isPromo && (
                 <div className="promo-badge absolute top-0 right-0 bg-[#E29578] text-white text-xs font-semibold px-2.5 py-1 rounded-bl-lg rounded-tr-lg z-10">
                     {t.promoBadge}
                 </div>
             )}
+            
+            {/* Card Content */}
             {isFullWidth ? <div className="md:flex">{cardContent}</div> : cardContent}
+            
+            {/* Hover Interaction Layer */}
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out"></div>
+            <div className="absolute inset-0 flex items-end justify-center p-6 opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out transform translate-y-4 group-hover:translate-y-0">
+                <button
+                    onClick={() => onBookService(service.id)}
+                    className="pointer-events-auto bg-white text-[#78350F] px-6 py-2.5 rounded-lg shadow-md text-sm font-semibold uppercase tracking-wider transition-all duration-300 ease-in-out transform hover:-translate-y-0.5 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-black/50"
+                    aria-label={`${t.bookThisTreatment}: ${t[service.titleKey]}`}
+                >
+                    {t.bookThisTreatment}
+                </button>
+            </div>
         </div>
     );
 };

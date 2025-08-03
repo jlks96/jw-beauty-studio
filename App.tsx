@@ -24,6 +24,7 @@ const App: React.FC = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalMessage, setModalMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [initialServiceId, setInitialServiceId] = useState('');
 
     const controlNavbar = useCallback(() => {
         if (window.scrollY > 64 && window.scrollY > lastScrollY) {
@@ -73,6 +74,11 @@ const App: React.FC = () => {
             });
         }
     };
+
+    const handleBookService = (serviceId: string) => {
+        setInitialServiceId(serviceId);
+        scrollToSection('booking');
+    };
     
     return (
         <div className={`bg-[#FFFBF5] text-[#5D4037] ${language === 'zh' ? 'font-noto-sans-sc' : 'font-poppins'}`}>
@@ -80,11 +86,16 @@ const App: React.FC = () => {
             <main>
                 <Hero scrollToSection={scrollToSection} />
                 <PromoBanner scrollToSection={scrollToSection}/>
-                <Services />
+                <Services onBookService={handleBookService} />
                 <About />
                 <Reviews />
                 <Contact />
-                <BookingForm showModalAlert={showModalAlert} setIsLoading={setIsLoading} />
+                <BookingForm 
+                    showModalAlert={showModalAlert} 
+                    setIsLoading={setIsLoading} 
+                    initialServiceId={initialServiceId}
+                    setInitialServiceId={setInitialServiceId}
+                />
                 <AiAdvisor />
             </main>
             <Footer />
