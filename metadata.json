@@ -1,0 +1,5 @@
+{
+  "name": "JW Beauty Studio",
+  "description": "A modern, responsive website for JW Beauty Studio, a home-based facial service in Singapore. The application features bilingual support (English/Chinese), service listings, an image carousel, and an appointment request form that integrates with WhatsApp.",
+  "requestFramePermissions": []
+}
