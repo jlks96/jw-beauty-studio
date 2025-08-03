@@ -39,7 +39,7 @@ const Header: React.FC<HeaderProps> = ({ isNavVisible, scrollToSection }) => {
         <header className={`bg-white/95 backdrop-blur-sm shadow-sm sticky top-0 z-50 h-16 transition-transform duration-300 ${isNavVisible ? 'translate-y-0' : '-translate-y-full'}`}>
             <div className="container mx-auto px-2 sm:px-4 h-full flex justify-between items-center">
                 <button onClick={() => handleNavClick('home')} className="flex items-center h-full rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#E29578] focus:ring-offset-white/95">
-                    <img src="/assets/logo.png" alt={t.contactStudioName} className="h-12 w-auto mr-3" />
+                    <img src="https://iili.io/F4Ghz5N.png" alt={t.contactStudioName} className="h-12 w-auto mr-3" />
                     <span className="font-playfair text-xl md:text-2xl font-bold text-[#78350F] tracking-wider" style={{ textShadow: '0px 1px 1px rgba(0,0,0,0.1)' }}>
                        {t.navStudioName}
                     </span>
