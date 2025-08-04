@@ -162,6 +162,9 @@ export const translations: TranslationSet = {
         aiWelcomeExample: `e.g., "I have dry, flaky skin."`,
         aiInputPlaceholder: "Ask a skincare question...",
         aiError: "I'm sorry, I'm having trouble connecting right now. Please try again later.",
+        aiSuggestion1: "I have dry, flaky skin.",
+        aiSuggestion2: "What's good for anti-aging?",
+        aiSuggestion3: "How can I reduce blackheads?",
     },
     zh: {
         navHome: "首页",
@@ -257,5 +260,8 @@ export const translations: TranslationSet = {
         aiWelcomeExample: "例如：“我的皮肤很干，还脱皮。”",
         aiInputPlaceholder: "请输入您的护肤问题...",
         aiError: "抱歉，我现在无法连接。请稍后再试。",
+        aiSuggestion1: "我的皮肤很干，还脱皮。",
+        aiSuggestion2: "有什么好的抗衰老方法吗？",
+        aiSuggestion3: "如何减少黑头？",
     }
 };
