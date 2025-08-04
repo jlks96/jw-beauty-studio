@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useTranslations } from '../hooks/useTranslations';
 
@@ -16,12 +15,12 @@ const Hero: React.FC<HeroProps> = ({ scrollToSection }) => {
     ];
 
     // Using the Streamable embed URL for iframe for robust playback
-    const videoEmbedSrc = "https://streamable.com/e/fkns65?autoplay=1&muted=1&loop=1&nocontrols=1";
+    const videoEmbedSrc = "https://streamable.com/e/3xk2e0?autoplay=1&muted=1&loop=1&nocontrols=1";
 
     return (
         <section
             id="home"
-            className="text-white min-h-[60vh] md:min-h-[65vh] lg:min-h-[75vh] flex items-center justify-center py-16 relative overflow-hidden bg-black"
+            className="text-white min-h-[60vh] md:min-h-[65vh] lg:min-h-[75vh] flex items-center justify-center py-16 relative overflow-hidden bg-white"
         >
             {/* Video Background Container */}
             <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
@@ -30,13 +29,12 @@ const Hero: React.FC<HeroProps> = ({ scrollToSection }) => {
                     frameBorder="0"
                     allow="autoplay; fullscreen"
                     title="Promotional Video"
-                    className="absolute top-1/2 left-1/2 w-[180vh] h-[101vh] max-w-none"
+                    className="absolute top-1/2 left-1/2 w-[160vh] h-[90vh] max-w-none"
                     style={{ 
-                        transform: 'translate(-50%, -50%) scale(1.25) translateX(-3%)' 
+                        transform: 'translate(-50%, -50%) translateX(-3%)' 
                     }}
                 />
             </div>
-
             {/* Overlay */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent z-10"></div>
 
