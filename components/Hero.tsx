@@ -16,7 +16,7 @@ const Hero: React.FC<HeroProps> = ({ scrollToSection }) => {
     ];
 
     // Using the Streamable embed URL for iframe for robust playback
-    const videoEmbedSrc = "https://streamable.com/e/y7su26?autoplay=1&muted=1&loop=1&nocontrols=1";
+    const videoEmbedSrc = "https://streamable.com/e/fkns65?autoplay=1&muted=1&loop=1&nocontrols=1";
 
     return (
         <section
