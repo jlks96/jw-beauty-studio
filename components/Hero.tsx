@@ -15,7 +15,7 @@ const Hero: React.FC<HeroProps> = ({ scrollToSection }) => {
     ];
 
     // Using the Streamable embed URL for iframe for robust playback
-    const videoEmbedSrc = "https://streamable.com/e/3xk2e0?autoplay=1&muted=1&loop=1&nocontrols=1";
+    const videoEmbedSrc = "https://streamable.com/e/fkns65?autoplay=1&muted=1&loop=1&nocontrols=1";
 
     return (
         <section
@@ -29,10 +29,7 @@ const Hero: React.FC<HeroProps> = ({ scrollToSection }) => {
                     frameBorder="0"
                     allow="autoplay; fullscreen"
                     title="Promotional Video"
-                    className="absolute top-1/2 left-1/2 w-[177.78vh] h-[100vh] max-w-none lg:scale-[1.25] sm:scale-[0.9]"
-                    style={{ 
-                        transform: 'translate(-50%, -50%) translateX(-3%)' 
-                    }}
+                    className="absolute top-1/2 left-1/2 min-w-[177.78vh] min-h-[100vh] w-[100vw] h-[56.25vw] max-w-none translate-x-[-50%] translate-y-[-50%] scale-[0.6] sm:scale-[0.7] md:scale-[0.8] lg:scale-[0.95] transform"
                 />
             </div>
             {/* Overlay */}
