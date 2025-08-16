@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import React, { useState, useRef, useEffect } from 'react';
 import { GoogleGenAI } from "@google/genai";
 import { useTranslations } from '../hooks/useTranslations';
 import { SendIcon, UserIcon, SparklesIcon } from './common/Icons';
@@ -14,6 +15,7 @@ const AiAdvisor: React.FC = () => {
     const [messages, setMessages] = useState<Message[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
+    const messagesEndRef = useRef<HTMLDivElement>(null);
 
     const systemInstruction = `You are an expert esthetician from JW Beauty Studio. Your tone must be friendly, professional, and helpful. Provide concise skincare advice. Use the detailed service list below to answer user questions and make recommendations. If a user's query can be addressed by a service, briefly mention it as a potential solution.
 
@@ -62,44 +64,74 @@ const AiAdvisor: React.FC = () => {
 1. Keep your answers to a maximum of 3-4 sentences.
 2. If asked about the price for 'Special Packages', state that pricing varies and it is best to book a consultation for a personalized quote. For all other services, you can state the price.
 3. **ALWAYS** include this disclaimer at the end of your response, on a new line: 'Disclaimer: This is AI-generated advice. For personalized treatment, please book a consultation.'`;
+    
+    useEffect(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [messages, isLoading]);
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!input.trim() || isLoading) return;
+    const sendMessage = async (messageText: string) => {
+        if (!messageText.trim() || isLoading) return;
 
-        const userMessage: Message = { sender: 'user', text: input };
-        setMessages(prev => [...prev, userMessage]);
+        const userMessage: Message = { sender: 'user', text: messageText };
+        setMessages(prev => [...prev, userMessage, { sender: 'ai', text: '' }]);
         setInput('');
         setIsLoading(true);
         setError('');
 
         try {
-            // API_KEY is expected to be in the environment variables, as per guidelines.
             if (!process.env.API_KEY) {
                 throw new Error("API key is not configured.");
             }
             const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-            const response = await ai.models.generateContent({
+            const responseStream = await ai.models.generateContentStream({
                 model: 'gemini-2.5-flash',
-                contents: input,
+                contents: messageText,
                 config: {
                     systemInstruction: systemInstruction,
                 },
             });
 
-            const aiMessage: Message = { sender: 'ai', text: response.text };
-            setMessages(prev => [...prev, aiMessage]);
+            for await (const chunk of responseStream) {
+                const chunkText = chunk.text;
+                setMessages(prev => {
+                    const newMessages = [...prev];
+                    newMessages[newMessages.length - 1].text += chunkText;
+                    return newMessages;
+                });
+            }
 
         } catch (err) {
             console.error("AI Advisor Error:", err);
             const errorMessage = t.aiError;
             setError(errorMessage);
-            const aiErrorMessage: Message = { sender: 'ai', text: errorMessage };
-            setMessages(prev => [...prev, aiErrorMessage]);
+            setMessages(prev => {
+                const newMessages = [...prev];
+                // Find the last AI message (which should be the empty one) and update it with the error.
+                const lastAiMessageIndex = newMessages.map(m => m.sender).lastIndexOf('ai');
+                if(lastAiMessageIndex !== -1) {
+                    newMessages[lastAiMessageIndex].text = errorMessage;
+                }
+                return newMessages;
+            });
         } finally {
             setIsLoading(false);
         }
     };
+    
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        sendMessage(input);
+    };
+
+    const handleSuggestionClick = (suggestion: string) => {
+        sendMessage(suggestion);
+    };
+
+    const suggestions = [
+        t.aiSuggestion1,
+        t.aiSuggestion2,
+        t.aiSuggestion3
+    ].filter(Boolean);
 
     return (
         <section id="ai-advisor" className="py-16 md:py-24 bg-[#FDF5E6]">
@@ -111,34 +143,43 @@ const AiAdvisor: React.FC = () => {
                 
                 <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-lg border border-stone-200">
                     <div className="p-4 sm:p-6 h-96 overflow-y-auto space-y-4 custom-scrollbar">
-                        {messages.length === 0 && (
+                        {messages.length === 0 && !isLoading && (
                             <div className="flex flex-col items-center justify-center h-full text-center text-stone-500">
                                  <SparklesIcon className="w-12 h-12 mb-4 text-[#E29578]/50"/>
                                  <p className="font-medium">{t.aiWelcomeMessage}</p>
                                  <p className="text-sm">{t.aiWelcomeExample}</p>
+                                 <div className="mt-6 flex flex-wrap justify-center gap-2">
+                                     {suggestions.map((text, i) => (
+                                         <button
+                                             key={i}
+                                             onClick={() => handleSuggestionClick(text)}
+                                             className="px-3 py-1.5 bg-stone-100/80 text-stone-700 rounded-full text-xs hover:bg-stone-200/90 transition-colors border border-stone-200"
+                                             aria-label={`Ask: ${text}`}
+                                         >
+                                             {text}
+                                         </button>
+                                     ))}
+                                 </div>
                             </div>
                         )}
                         {messages.map((msg, index) => (
                             <div key={index} className={`flex items-start gap-3 animate-fade-in ${msg.sender === 'user' ? 'justify-end' : ''}`}>
                                 {msg.sender === 'ai' && <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#E29578] flex items-center justify-center text-white"><SparklesIcon className="w-5 h-5"/></div>}
                                 <div className={`max-w-md p-3 rounded-lg ${msg.sender === 'user' ? 'bg-[#FEF3EF] text-[#78350F]' : 'bg-stone-100 text-[#5D4037]'}`}>
-                                    <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
+                                    {msg.sender === 'ai' && !msg.text && isLoading ? (
+                                        <div className="flex items-center space-x-1 py-1">
+                                            <span className="w-1.5 h-1.5 bg-stone-400 rounded-full animate-pulse [animation-delay:-0.3s]"></span>
+                                            <span className="w-1.5 h-1.5 bg-stone-400 rounded-full animate-pulse [animation-delay:-0.15s]"></span>
+                                            <span className="w-1.5 h-1.5 bg-stone-400 rounded-full animate-pulse"></span>
+                                        </div>
+                                    ) : (
+                                        <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
+                                    )}
                                 </div>
                                 {msg.sender === 'user' && <div className="flex-shrink-0 w-8 h-8 rounded-full bg-stone-200 flex items-center justify-center text-stone-600"><UserIcon className="w-5 h-5"/></div>}
                             </div>
                         ))}
-                        {isLoading && (
-                             <div className="flex items-start gap-3 animate-fade-in">
-                                 <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#E29578] flex items-center justify-center text-white"><SparklesIcon className="w-5 h-5"/></div>
-                                 <div className="max-w-md p-3 rounded-lg bg-stone-100 text-[#5D4037]">
-                                     <div className="flex items-center space-x-1">
-                                         <span className="w-1.5 h-1.5 bg-stone-400 rounded-full animate-pulse [animation-delay:-0.3s]"></span>
-                                         <span className="w-1.5 h-1.5 bg-stone-400 rounded-full animate-pulse [animation-delay:-0.15s]"></span>
-                                         <span className="w-1.5 h-1.5 bg-stone-400 rounded-full animate-pulse"></span>
-                                     </div>
-                                 </div>
-                             </div>
-                        )}
+                         <div ref={messagesEndRef} />
                          <style>{`
                             .custom-scrollbar::-webkit-scrollbar {
                                 width: 6px;
