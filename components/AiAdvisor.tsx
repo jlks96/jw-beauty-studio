@@ -4,6 +4,7 @@ import { GoogleGenAI } from "@google/genai";
 import { useTranslations } from '../hooks/useTranslations';
 import { systemInstruction } from '../locales/prompts';
 import { SendIcon, UserIcon, SparklesIcon } from './common/Icons';
+import Typewriter from './common/Typewriter';
 
 interface Message {
     sender: 'user' | 'ai';
@@ -45,10 +46,22 @@ const AiAdvisor: React.FC = () => {
             });
 
             for await (const chunk of responseStream) {
-                const chunkText = chunk.text;
                 setMessages(prev => {
                     const newMessages = [...prev];
-                    newMessages[newMessages.length - 1].text += chunkText;
+                    const lastIndex = newMessages.length - 1;
+                    if (lastIndex < 0) return prev;
+                    
+                    const lastMsg = { ...newMessages[lastIndex] };
+                    
+                    const newText = chunk.text || '';
+                    
+                    if (newText.startsWith(lastMsg.text) && lastMsg.text.length > 0) {
+                        lastMsg.text = newText;
+                    } else if (!lastMsg.text.endsWith(newText)) {
+                        lastMsg.text += newText;
+                    }
+                    
+                    newMessages[lastIndex] = lastMsg;
                     return newMessages;
                 });
             }
@@ -126,7 +139,13 @@ const AiAdvisor: React.FC = () => {
                                             <span className="w-1.5 h-1.5 bg-stone-400 rounded-full animate-pulse"></span>
                                         </div>
                                     ) : (
-                                        <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
+                                        <Typewriter 
+                                            text={msg.text} 
+                                            speed={10} 
+                                            className="text-sm" 
+                                            animate={index === messages.length - 1} 
+                                            onType={() => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })}
+                                        />
                                     )}
                                 </div>
                                 {msg.sender === 'user' && <div className="flex-shrink-0 w-8 h-8 rounded-full bg-stone-200 flex items-center justify-center text-stone-600"><UserIcon className="w-5 h-5"/></div>}
