@@ -17,11 +17,11 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, onBookService }) => 
         <>
             <img 
                 src={service.image} 
-                alt={t[service.titleKey]} 
+                alt={t[service.titleKey] as string} 
                 className={`w-full object-cover ${isFullWidth ? 'md:w-1/2 h-56 md:h-auto' : 'h-56'}`}
                 loading="lazy"
                 decoding="async"
-                onError={(e) => (e.currentTarget.src = `https://placehold.co/600x400/FFEBCD/333333?text=${encodeURIComponent(t[service.titleKey])}`)}
+                onError={(e) => (e.currentTarget.src = `https://placehold.co/600x400/FFEBCD/333333?text=${encodeURIComponent(t[service.titleKey] as string)}`)}
             />
             <div className={`p-6 md:p-8 ${isFullWidth ? 'md:w-1/2 flex flex-col justify-center' : ''}`}>
                 <h3 className="text-2xl font-semibold mb-3 text-[#78350F] font-playfair">
@@ -60,7 +60,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, onBookService }) => 
                 <button
                     onClick={() => onBookService(service.id)}
                     className="pointer-events-auto bg-white text-[#78350F] px-6 py-2.5 rounded-lg shadow-md text-sm font-semibold uppercase tracking-wider transition-all duration-300 ease-in-out transform hover:-translate-y-0.5 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-black/50"
-                    aria-label={`${t.bookThisTreatment}: ${t[service.titleKey]}`}
+                    aria-label={`${t.bookThisTreatment}: ${t[service.titleKey] as string}`}
                 >
                     {t.bookThisTreatment}
                 </button>

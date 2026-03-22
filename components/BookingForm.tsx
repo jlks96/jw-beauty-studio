@@ -1,7 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { useTranslations } from '../hooks/useTranslations';
-import { useLanguage } from '../context/LanguageContext';
 import { GOOGLE_APP_SCRIPT_URL, STUDIO_WHATSAPP_NUMBER, services } from '../constants';
 import { CtaButton } from './common/CtaButton';
 import Calendar from './common/Calendar';
@@ -33,7 +32,6 @@ const getTodayString = () => {
 
 const BookingForm: React.FC<BookingFormProps> = ({ showModalAlert, setIsLoading, initialServiceId, setInitialServiceId }) => {
     const t = useTranslations();
-    const { language } = useLanguage();
     const [formState, setFormState] = useState<FormState>({
         name: '',
         phone: '',

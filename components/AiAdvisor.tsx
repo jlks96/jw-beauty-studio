@@ -105,7 +105,7 @@ const AiAdvisor: React.FC = () => {
                                      {suggestions.map((text, i) => (
                                          <button
                                              key={i}
-                                             onClick={() => handleSuggestionClick(text)}
+                                             onClick={() => handleSuggestionClick(text as string)}
                                              className="px-3 py-1.5 bg-stone-100/80 text-stone-700 rounded-full text-xs hover:bg-stone-200/90 transition-colors border border-stone-200"
                                              aria-label={`Ask: ${text}`}
                                          >
