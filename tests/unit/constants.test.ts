@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { services, aboutCarouselImages, STUDIO_WHATSAPP_NUMBER } from './constants';
-import { translations } from './locales';
+import { services, aboutCarouselImages, STUDIO_WHATSAPP_NUMBER } from '../../constants';
+import { translations } from '../../locales';
 
 describe('Constants', () => {
     it('should have a valid WhatsApp number', () => {

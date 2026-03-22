@@ -93,7 +93,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ showModalAlert, setIsLoading,
     const formatDateForDisplay = (dateString: string) => {
         if (!dateString) return '';
         const date = new Date(`${dateString}T00:00:00Z`);
-        const dateLocale = language === 'zh' ? 'zh-CN' : 'en-US';
+        const dateLocale = t.dateLocale as string;
         return new Intl.DateTimeFormat(dateLocale, { year: 'numeric', month: 'long', day: 'numeric' }).format(date);
     };
 
@@ -118,15 +118,26 @@ const BookingForm: React.FC<BookingFormProps> = ({ showModalAlert, setIsLoading,
 
             // Find the selected date and time's translated text for the message
             const selectedDate = new Date(`${formState.date}T00:00:00`);
-            const dateLocale = language === 'zh' ? 'zh-CN' : 'en-SG';
+            const dateLocale = t.dateLocale as string;
             const selectedDateText = new Intl.DateTimeFormat(dateLocale, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }).format(selectedDate);
             const selectedTimeText = timeOptions.find(opt => opt.key === formState.time)?.fullText || formState.time;
 
             // Prepare and open WhatsApp
-            const studioName = t.contactStudioName;
-            const msg = language === 'zh'
-                ? `你好 ${studioName}！\n\n我想预约一项服务。\n\n*姓名:* ${formState.name}\n*电话:* ${formState.phone}\n*服务项目:* ${formState.service}\n*首选日期:* ${selectedDateText}\n*首选时间:* ${selectedTimeText}\n\n请告知您的可约时间。\n谢谢！`
-                : `Hello ${studioName}!\n\nI would like to request an appointment.\n\n*Name:* ${formState.name}\n*Phone:* ${formState.phone}\n*Service:* ${formState.service}\n*Preferred Date:* ${selectedDateText}\n*Preferred Time:* ${selectedTimeText}\n\nPlease let me know your availability.\nThank you!`;
+            const studioName = t.contactStudioName as string;
+            let msg = t.whatsappMessageTemplate as string;
+            
+            const replacements: Record<string, string> = {
+                '%studioName%': studioName,
+                '%name%': formState.name,
+                '%phone%': formState.phone,
+                '%service%': formState.service,
+                '%date%': selectedDateText,
+                '%time%': selectedTimeText
+            };
+
+            Object.entries(replacements).forEach(([key, value]) => {
+                msg = msg.replace(key, value);
+            });
             
             const whatsappUrl = `https://wa.me/${STUDIO_WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
             window.open(whatsappUrl, '_blank');
@@ -208,17 +219,10 @@ const BookingForm: React.FC<BookingFormProps> = ({ showModalAlert, setIsLoading,
                         </button>
                         {isCalendarOpen && (
                             <div className="absolute z-10 top-full mt-2 w-full shadow-lg rounded-lg animate-fade-in-up">
-                                 <style>{`
-                                    @keyframes fade-in-up {
-                                        from { opacity: 0; transform: translateY(-10px) scale(0.98); }
-                                        to { opacity: 1; transform: translateY(0) scale(1); }
-                                    }
-                                    .animate-fade-in-up { animation: fade-in-up 0.2s ease-out forwards; }
-                                `}</style>
+
                                 <Calendar 
                                     selectedDate={formState.date}
                                     onDateSelect={handleDateSelect}
-                                    language={language}
                                 />
                             </div>
                         )}

@@ -1,14 +1,15 @@
 
 import React, { useState } from 'react';
 import { ChevronLeftIcon, ChevronRightIcon } from './Icons';
+import { useTranslations } from '../../hooks/useTranslations';
 
 interface CalendarProps {
     selectedDate: string;
     onDateSelect: (date: string) => void;
-    language: 'en' | 'zh';
 }
 
-const Calendar: React.FC<CalendarProps> = ({ selectedDate, onDateSelect, language }) => {
+const Calendar: React.FC<CalendarProps> = ({ selectedDate, onDateSelect }) => {
+    const t = useTranslations() as any; // Cast to any because calendarDays is added dynamically
     const [currentMonth, setCurrentMonth] = useState(new Date());
 
     const today = new Date();
@@ -32,10 +33,8 @@ const Calendar: React.FC<CalendarProps> = ({ selectedDate, onDateSelect, languag
     };
 
     const renderHeader = () => {
-        const dateFormat = language === 'zh' 
-            ? { year: 'numeric', month: 'long' } as const
-            : { month: 'long', year: 'numeric' } as const;
-        const locale = language === 'zh' ? 'zh-CN' : 'en-US';
+        const dateFormat = { year: 'numeric', month: 'long' } as const;
+        const locale = t.dateLocale;
 
         return (
             <div className="flex justify-between items-center mb-4">
@@ -53,9 +52,7 @@ const Calendar: React.FC<CalendarProps> = ({ selectedDate, onDateSelect, languag
     };
 
     const renderDaysOfWeek = () => {
-        const days = language === 'zh'
-            ? ['日', '一', '二', '三', '四', '五', '六']
-            : ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+        const days = t.calendarDays as string[];
         
         return (
             <div className="grid grid-cols-7 text-center text-xs text-stone-500 font-medium mb-2">

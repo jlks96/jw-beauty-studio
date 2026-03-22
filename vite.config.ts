@@ -6,8 +6,9 @@ export default defineConfig(({ mode }) => {
     const env = loadEnv(mode, '.', '');
     return {
       define: {
-        'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
-        'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY)
+        'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
+        'process.env.GOOGLE_APP_SCRIPT_URL': JSON.stringify(env.GOOGLE_APP_SCRIPT_URL),
+        'process.env.STUDIO_WHATSAPP_NUMBER': JSON.stringify(env.STUDIO_WHATSAPP_NUMBER),
       },
       resolve: {
         alias: {

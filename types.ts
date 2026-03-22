@@ -10,7 +10,7 @@ export interface Service {
     colSpan?: string;
 }
 
-export type Translations = Record<string, string>;
+export type Translations = Record<string, string | string[]>;
 
 export interface TranslationSet {
   [key: string]: Translations;

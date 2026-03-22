@@ -97,4 +97,8 @@ export const zh: Translations = {
     aiSuggestion1: "我的皮肤很干，还脱皮。",
     aiSuggestion2: "有什么好的抗衰老方法吗？",
     aiSuggestion3: "如何减少黑头？",
+    calendarDays: ['日', '一', '二', '三', '四', '五', '六'],
+    dateLocale: 'zh-CN',
+    whatsappMessageTemplate: "你好 %studioName%！\n\n我想预约一项服务。\n\n*姓名:* %name%\n*电话:* %phone%\n*服务项目:* %service%\n*首选日期:* %date%\n*首选时间:* %time%\n\n请告知您的可约时间。\n谢谢！",
+    appFontClass: "font-noto-sans-sc",
 };

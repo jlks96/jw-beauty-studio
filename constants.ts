@@ -1,8 +1,8 @@
 
 import { Service, TranslationSet } from './types';
 
-export const GOOGLE_APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxNIDoX3P7dXhpHriuNZ2L8RVY5QfTzsgvP_L0u8SQMVJU-UvmC7_1Ilbk5cW-_qttb8Q/exec';
-export const STUDIO_WHATSAPP_NUMBER = '6581566068';
+export const GOOGLE_APP_SCRIPT_URL = process.env.GOOGLE_APP_SCRIPT_URL || '';
+export const STUDIO_WHATSAPP_NUMBER = process.env.STUDIO_WHATSAPP_NUMBER || '';
 
 export const services: Service[] = [
     {

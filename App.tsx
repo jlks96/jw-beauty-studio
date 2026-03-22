@@ -46,13 +46,13 @@ const App: React.FC = () => {
       document.documentElement.lang = language;
       const htmlEl = document.querySelector('html');
       if (htmlEl) {
-        if (language === 'zh') {
-          htmlEl.classList.add('font-noto-sans-sc');
-        } else {
-          htmlEl.classList.remove('font-noto-sans-sc');
+        // Remove all possible font classes before adding the current one
+        htmlEl.classList.remove('font-noto-sans-sc');
+        if (t.appFontClass) {
+            htmlEl.classList.add(t.appFontClass as string);
         }
       }
-    }, [language]);
+    }, [language, t.appFontClass]);
 
 
     const showModalAlert = useCallback((messageKey: string) => {
@@ -81,7 +81,7 @@ const App: React.FC = () => {
     };
     
     return (
-        <div className={`bg-[#FFFBF5] text-[#5D4037] ${language === 'zh' ? 'font-noto-sans-sc' : 'font-poppins'}`}>
+        <div className={`bg-[#FFFBF5] text-[#5D4037] ${t.appFontClass}`}>
             <Header isNavVisible={isNavVisible} scrollToSection={scrollToSection} />
             <main>
                 <Hero scrollToSection={scrollToSection} />

@@ -97,4 +97,8 @@ export const en: Translations = {
     aiSuggestion1: "I have dry, flaky skin.",
     aiSuggestion2: "What's good for anti-aging?",
     aiSuggestion3: "How can I reduce blackheads?",
+    calendarDays: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+    dateLocale: 'en-US',
+    whatsappMessageTemplate: "Hello %studioName%!\n\nI would like to request an appointment.\n\n*Name:* %name%\n*Phone:* %phone%\n*Service:* %service%\n*Preferred Date:* %date%\n*Preferred Time:* %time%\n\nPlease let me know your availability.\nThank you!",
+    appFontClass: "font-poppins",
 };
