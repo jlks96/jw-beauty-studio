@@ -1,0 +1,11 @@
+ M components/About.tsx
+ M constants.ts
+ M context/LanguageContext.tsx
+ M package-lock.json
+ M package.json
+ M vite.config.ts
+?? constants.test.ts
+?? git_diff.txt
+?? git_status.txt
+?? locales/
+?? setupTests.ts

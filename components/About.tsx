@@ -72,11 +72,11 @@ const About: React.FC = () => {
                                 className="flex transition-transform duration-500 ease-in-out h-full"
                                 style={{ transform: `translateX(-${currentIndex * 100}%)` }}
                             >
-                                {aboutCarouselImages.map((src, index) => (
-                                    <div key={src} className="w-full flex-shrink-0 h-full">
+                                {aboutCarouselImages.map((image, index) => (
+                                    <div key={image.src} className="w-full flex-shrink-0 h-full">
                                         <img
-                                            src={src}
-                                            alt={`JW Beauty Studio view ${index + 1}`}
+                                            src={image.src}
+                                            alt={image.alt}
                                             className="w-full h-full object-cover"
                                             loading={index === 0 ? "eager" : "lazy"}
                                             decoding="async"
