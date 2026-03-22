@@ -2,42 +2,63 @@
 import React from 'react';
 import { useTranslations } from '../hooks/useTranslations';
 import { STUDIO_WHATSAPP_NUMBER } from '../constants';
-import { LocationMarkerIcon, PhoneIcon } from './common/Icons';
+import Box from '@mui/material/Box';
+import Container from '@mui/material/Container';
+import Typography from '@mui/material/Typography';
+import Paper from '@mui/material/Paper';
+import Link from '@mui/material/Link';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import PhoneIcon from '@mui/icons-material/Phone';
 
 const Contact: React.FC = () => {
     const t = useTranslations();
 
     return (
-        <section id="contact" className="py-16 md:py-24 bg-white">
-            <div className="container mx-auto px-4 sm:px-6">
-                <h2 className="text-4xl md:text-5xl font-bold text-center text-[#78350F] font-playfair mb-12">
+        <Box id="contact" component="section" sx={{ py: { xs: 8, md: 12 }, bgcolor: 'background.paper' }}>
+            <Container maxWidth="lg">
+                <Typography variant="h2" align="center" sx={{ fontFamily: '"Playfair Display", serif', fontWeight: 700, color: 'primary.dark', mb: 6 }}>
                     {t.contactTitle}
-                </h2>
-                <div className="max-w-2xl mx-auto bg-white p-8 md:p-10 rounded-xl shadow-xl text-center border-2 border-[#FDF5E6]">
-                    <h3 className="text-3xl font-semibold text-[#78350F] font-playfair mb-6">
+                </Typography>
+                <Paper
+                    elevation={4}
+                    sx={{
+                        maxWidth: 640,
+                        mx: 'auto',
+                        p: { xs: 4, md: 5 },
+                        borderRadius: 3,
+                        textAlign: 'center',
+                        border: '2px solid #FDF5E6',
+                    }}
+                >
+                    <Typography variant="h4" sx={{ fontFamily: '"Playfair Display", serif', fontWeight: 600, color: 'primary.dark', mb: 3 }}>
                         {t.contactStudioName}
-                    </h3>
-                    <div className="mb-6">
-                        <p className="text-[#5D4037] text-lg flex items-center justify-center flex-wrap">
-                            <LocationMarkerIcon className="h-6 w-6 mr-3 text-[#E29578] flex-shrink-0" />
-                            <span>{t.contactAddress}</span>
-                        </p>
-                    </div>
-                    <div className="mb-8">
-                        <p className="text-[#5D4037] text-lg flex items-center justify-center flex-wrap">
-                            <PhoneIcon className="h-6 w-6 mr-3 text-[#E29578] flex-shrink-0" />
-                            <span>{t.contactWhatsappLabel}</span>
-                            <a href={`https://wa.me/${STUDIO_WHATSAPP_NUMBER}`} target="_blank" rel="noopener noreferrer" className="text-[#C5735A] hover:text-[#78350F] font-medium ml-1 transition-colors">
-                                {STUDIO_WHATSAPP_NUMBER}
-                            </a>
-                        </p>
-                    </div>
-                    <p className="text-stone-500 text-sm">
-                       {t.contactHoursNote}
-                    </p>
-                </div>
-            </div>
-        </section>
+                    </Typography>
+                    <Box sx={{ mb: 3, display: 'flex', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap' }}>
+                        <LocationOnIcon sx={{ mr: 1.5, color: 'primary.main' }} />
+                        <Typography variant="body1" color="text.secondary">
+                            {t.contactAddress}
+                        </Typography>
+                    </Box>
+                    <Box sx={{ mb: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap' }}>
+                        <PhoneIcon sx={{ mr: 1.5, color: 'primary.main' }} />
+                        <Typography variant="body1" color="text.secondary">
+                            {t.contactWhatsappLabel}
+                        </Typography>
+                        <Link
+                            href={`https://wa.me/${STUDIO_WHATSAPP_NUMBER}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            sx={{ ml: 0.5, color: 'primary.main', fontWeight: 500, '&:hover': { color: 'primary.dark' } }}
+                        >
+                            {STUDIO_WHATSAPP_NUMBER}
+                        </Link>
+                    </Box>
+                    <Typography variant="body2" color="text.disabled">
+                        {t.contactHoursNote}
+                    </Typography>
+                </Paper>
+            </Container>
+        </Box>
     );
 };
 

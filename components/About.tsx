@@ -2,7 +2,13 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useTranslations } from '../hooks/useTranslations';
 import { aboutCarouselImages } from '../constants';
-import { ChevronLeftIcon, ChevronRightIcon } from './common/Icons';
+import Box from '@mui/material/Box';
+import Container from '@mui/material/Container';
+import Typography from '@mui/material/Typography';
+import Paper from '@mui/material/Paper';
+import IconButton from '@mui/material/IconButton';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 const About: React.FC = () => {
     const t = useTranslations();
@@ -16,12 +22,10 @@ const About: React.FC = () => {
             ([entry]) => {
                 if (entry.isIntersecting) {
                     setIsVisible(true);
-                    observer.disconnect(); // Fire animation only once
+                    observer.disconnect();
                 }
             },
-            {
-                threshold: 0.15, // Trigger when 15% of the element is visible
-            }
+            { threshold: 0.15 }
         );
 
         const currentRef = sectionRef.current;
@@ -62,72 +66,127 @@ const About: React.FC = () => {
     };
 
     return (
-        <section id="about" ref={sectionRef} className="py-16 md:py-24 bg-white overflow-hidden">
-            <div className="container mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center gap-8 md:gap-12">
-                <div className={`md:w-5/12 transition-all duration-700 ease-out transform ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}`}>
-                    <div className="bg-[#FDF5E6] rounded-xl shadow-lg p-4">
-                        <div className="relative overflow-hidden rounded-lg h-[450px] w-full max-w-[450px] mx-auto group">
+        <Box
+            id="about"
+            component="section"
+            ref={sectionRef}
+            sx={{ py: { xs: 8, md: 12 }, bgcolor: 'background.paper', overflow: 'hidden' }}
+        >
+            <Container maxWidth="lg" sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, alignItems: 'center', gap: { xs: 4, md: 6 } }}>
+                {/* Carousel Side */}
+                <Box
+                    sx={{
+                        width: { xs: '100%', md: '42%' },
+                        transition: 'all 0.7s ease-out',
+                        transform: isVisible ? 'translateX(0)' : 'translateX(-40px)',
+                        opacity: isVisible ? 1 : 0,
+                    }}
+                >
+                    <Paper elevation={3} sx={{ bgcolor: '#FDF5E6', borderRadius: 3, p: 2 }}>
+                        <Box
+                            sx={{
+                                position: 'relative',
+                                overflow: 'hidden',
+                                borderRadius: 2,
+                                height: 450,
+                                width: '100%',
+                                maxWidth: 450,
+                                mx: 'auto',
+                                '&:hover .carouselControl': { opacity: 1, transform: 'translateX(0)' },
+                            }}
+                        >
                             {/* Carousel Track */}
-                            <div
-                                className="flex transition-transform duration-500 ease-in-out h-full"
-                                style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    transition: 'transform 0.5s ease-in-out',
+                                    height: '100%',
+                                    transform: `translateX(-${currentIndex * 100}%)`,
+                                }}
                             >
                                 {aboutCarouselImages.map((image, index) => (
-                                    <div key={image.src} className="w-full flex-shrink-0 h-full">
-                                        <img
+                                    <Box key={image.src} sx={{ width: '100%', flexShrink: 0, height: '100%' }}>
+                                        <Box
+                                            component="img"
                                             src={image.src}
                                             alt={image.alt}
-                                            className="w-full h-full object-cover"
                                             loading={index === 0 ? "eager" : "lazy"}
-                                            decoding="async"
-                                            onError={(e) => (e.currentTarget.src = 'https://placehold.co/500x500/F5E9E2/78350F?text=Studio+View')}
+                                            sx={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                            onError={(e: any) => (e.target.src = 'https://placehold.co/500x500/F5E9E2/78350F?text=Studio+View')}
                                         />
-                                    </div>
+                                    </Box>
                                 ))}
-                            </div>
-                            
+                            </Box>
+
                             {/* Controls */}
-                            <div className="absolute inset-0 flex items-center justify-between p-2">
-                                <button
+                            <Box sx={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 1 }}>
+                                <IconButton
+                                    className="carouselControl"
                                     onClick={prevSlide}
-                                    className="bg-white/60 p-2 rounded-full shadow-md hover:bg-white/90 transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 -translate-x-4 group-hover:translate-x-0"
                                     aria-label="Previous slide"
+                                    sx={{ bgcolor: 'rgba(255,255,255,0.6)', opacity: 0, transform: 'translateX(-16px)', transition: 'all 0.3s', '&:hover': { bgcolor: 'rgba(255,255,255,0.9)' } }}
                                 >
-                                    <ChevronLeftIcon className="h-5 w-5 text-stone-800"/>
-                                </button>
-                                <button
+                                    <ChevronLeftIcon />
+                                </IconButton>
+                                <IconButton
+                                    className="carouselControl"
                                     onClick={nextSlide}
-                                    className="bg-white/60 p-2 rounded-full shadow-md hover:bg-white/90 transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 translate-x-4 group-hover:translate-x-0"
                                     aria-label="Next slide"
+                                    sx={{ bgcolor: 'rgba(255,255,255,0.6)', opacity: 0, transform: 'translateX(16px)', transition: 'all 0.3s', '&:hover': { bgcolor: 'rgba(255,255,255,0.9)' } }}
                                 >
-                                    <ChevronRightIcon className="h-5 w-5 text-stone-800"/>
-                                </button>
-                            </div>
+                                    <ChevronRightIcon />
+                                </IconButton>
+                            </Box>
 
                             {/* Dots */}
-                            <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2 z-10">
+                            <Box sx={{ position: 'absolute', bottom: 16, left: 0, right: 0, display: 'flex', justifyContent: 'center', gap: 1, zIndex: 1 }}>
                                 {aboutCarouselImages.map((_, index) => (
-                                    <button
+                                    <Box
                                         key={index}
+                                        component="button"
                                         onClick={() => goToSlide(index)}
-                                        className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${currentIndex === index ? 'bg-white scale-125' : 'bg-white/60 hover:bg-white'}`}
                                         aria-label={`Go to slide ${index + 1}`}
-                                    ></button>
+                                        sx={{
+                                            width: 10,
+                                            height: 10,
+                                            borderRadius: '50%',
+                                            border: 'none',
+                                            cursor: 'pointer',
+                                            transition: 'all 0.3s',
+                                            bgcolor: currentIndex === index ? 'common.white' : 'rgba(255,255,255,0.6)',
+                                            transform: currentIndex === index ? 'scale(1.25)' : 'scale(1)',
+                                        }}
+                                    />
                                 ))}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div className={`md:w-7/12 transition-all duration-700 ease-out transform ${isVisible ? 'opacity-100 translate-x-0 delay-200' : 'opacity-0 translate-x-10'}`}>
-                    <h2 className="text-4xl md:text-5xl font-bold text-center md:text-left text-[#78350F] font-playfair mb-6">
+                            </Box>
+                        </Box>
+                    </Paper>
+                </Box>
+
+                {/* Text Side */}
+                <Box
+                    sx={{
+                        width: { xs: '100%', md: '58%' },
+                        transition: 'all 0.7s ease-out 0.2s',
+                        transform: isVisible ? 'translateX(0)' : 'translateX(40px)',
+                        opacity: isVisible ? 1 : 0,
+                    }}
+                >
+                    <Typography variant="h2" sx={{ fontFamily: '"Playfair Display", serif', fontWeight: 700, color: 'primary.dark', mb: 3, textAlign: { xs: 'center', md: 'left' } }}>
                         {t.aboutTitle}
-                    </h2>
-                    <p className="text-[#5D4037] mb-4 leading-relaxed text-lg">{t.aboutP1}</p>
-                    <p className="text-[#5D4037] mb-4 leading-relaxed">{t.aboutP2}</p>
-                    <p className="text-[#9F5440] leading-relaxed font-medium">{t.aboutP3}</p>
-                </div>
-            </div>
-        </section>
+                    </Typography>
+                    <Typography variant="body1" sx={{ color: 'text.secondary', mb: 2, lineHeight: 1.8, fontSize: '1.125rem' }}>
+                        {t.aboutP1}
+                    </Typography>
+                    <Typography variant="body1" sx={{ color: 'text.secondary', mb: 2, lineHeight: 1.8 }}>
+                        {t.aboutP2}
+                    </Typography>
+                    <Typography variant="body1" sx={{ color: 'primary.main', lineHeight: 1.8, fontWeight: 500 }}>
+                        {t.aboutP3}
+                    </Typography>
+                </Box>
+            </Container>
+        </Box>
     );
 };
 

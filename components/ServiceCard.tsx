@@ -1,7 +1,12 @@
-
 import React from 'react';
 import { useTranslations } from '../hooks/useTranslations';
 import { Service } from '../types';
+import Card from '@mui/material/Card';
+import CardMedia from '@mui/material/CardMedia';
+import CardContent from '@mui/material/CardContent';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
 
 interface ServiceCardProps {
     service: Service;
@@ -10,62 +15,69 @@ interface ServiceCardProps {
 
 const ServiceCard: React.FC<ServiceCardProps> = ({ service, onBookService }) => {
     const t = useTranslations();
-
     const isFullWidth = service.colSpan?.includes('lg:col-span-3');
 
-    const cardContent = (
-        <>
-            <img 
-                src={service.image} 
-                alt={t[service.titleKey] as string} 
-                className={`w-full object-cover ${isFullWidth ? 'md:w-1/2 h-56 md:h-auto' : 'h-56'}`}
-                loading="lazy"
-                decoding="async"
-                onError={(e) => (e.currentTarget.src = `https://placehold.co/600x400/FFEBCD/333333?text=${encodeURIComponent(t[service.titleKey] as string)}`)}
-            />
-            <div className={`p-6 md:p-8 ${isFullWidth ? 'md:w-1/2 flex flex-col justify-center' : ''}`}>
-                <h3 className="text-2xl font-semibold mb-3 text-[#78350F] font-playfair">
-                    {t[service.titleKey]}
-                </h3>
-                <p className="text-[#5D4037] mb-4 text-sm leading-relaxed">
-                    {t[service.descriptionKey]}
-                </p>
-                <p className="text-[#9F5440] font-semibold text-lg mt-auto">
-                    {service.oldPriceKey && (
-                        <span className="line-through text-gray-500 text-sm mr-2">
-                            {t[service.oldPriceKey]}
-                        </span>
-                    )}
-                    {t[service.priceKey]}
-                </p>
-            </div>
-        </>
-    );
-
-
     return (
-        <div className={`group bg-white rounded-xl overflow-hidden shadow-lg relative transition-all duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-1.5 ${service.colSpan || ''}`}>
+        <Card 
+            sx={{ 
+                height: '100%', 
+                display: 'flex', 
+                flexDirection: isFullWidth ? { xs: 'column', md: 'row' } : 'column',
+                position: 'relative',
+                transition: 'transform 0.3s, box-shadow 0.3s',
+                '&:hover': {
+                    transform: 'translateY(-6px)',
+                    boxShadow: 6,
+                    '& .hoverLayer': { opacity: 1 },
+                    '& .bookButton': { transform: 'translateY(0)', opacity: 1 }
+                }
+            }}
+        >
             {service.isPromo && (
-                <div className="promo-badge absolute top-0 right-0 bg-[#E29578] text-white text-xs font-semibold px-2.5 py-1 rounded-bl-lg rounded-tr-lg z-10">
+                <Box sx={{ position: 'absolute', top: 0, right: 0, bgcolor: 'primary.main', color: 'common.white', px: 1.5, py: 0.5, borderRadius: '0 0 0 8px', zIndex: 1, fontWeight: 'bold', fontSize: '0.75rem' }}>
                     {t.promoBadge}
-                </div>
+                </Box>
             )}
             
-            {/* Card Content */}
-            {isFullWidth ? <div className="md:flex">{cardContent}</div> : cardContent}
+            <CardMedia
+                component="img"
+                image={service.image}
+                alt={t[service.titleKey] as string}
+                sx={{ width: isFullWidth ? { xs: '100%', md: '50%' } : '100%', height: isFullWidth ? { xs: 224, md: 'auto' } : 224 }}
+                onError={(e: any) => (e.target.src = `https://placehold.co/600x400/FFEBCD/333333?text=${encodeURIComponent(t[service.titleKey] as string)}`)}
+            />
             
-            {/* Hover Interaction Layer */}
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out"></div>
-            <div className="absolute inset-0 flex items-end justify-center p-6 opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out transform translate-y-4 group-hover:translate-y-0">
-                <button
+            <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', p: { xs: 3, md: 4 } }}>
+                <Typography variant="h5" component="h3" sx={{ fontFamily: '"Playfair Display", serif', fontWeight: 600, color: 'primary.dark', mb: 1.5 }}>
+                    {t[service.titleKey]}
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 2, flexGrow: 1 }}>
+                    {t[service.descriptionKey]}
+                </Typography>
+                <Typography variant="h6" sx={{ color: 'primary.main', fontWeight: 600, mt: 'auto' }}>
+                    {service.oldPriceKey && (
+                        <Box component="span" sx={{ textDecoration: 'line-through', color: 'text.disabled', fontSize: '0.875rem', mr: 1 }}>
+                            {t[service.oldPriceKey]}
+                        </Box>
+                    )}
+                    {t[service.priceKey]}
+                </Typography>
+            </CardContent>
+
+            <Box className="hoverLayer" sx={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.6), transparent)', opacity: 0, transition: 'opacity 0.3s' }} />
+            
+            <Box sx={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'flex-end', justifyContent: 'center', p: 3, pointerEvents: 'none' }}>
+                <Button 
+                    variant="contained" 
+                    color="primary" 
+                    className="bookButton"
                     onClick={() => onBookService(service.id)}
-                    className="pointer-events-auto bg-white text-[#78350F] px-6 py-2.5 rounded-lg shadow-md text-sm font-semibold uppercase tracking-wider transition-all duration-300 ease-in-out transform hover:-translate-y-0.5 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-black/50"
-                    aria-label={`${t.bookThisTreatment}: ${t[service.titleKey] as string}`}
+                    sx={{ pointerEvents: 'auto', opacity: 0, transform: 'translateY(16px)', transition: 'all 0.3s', bgcolor: 'common.white', color: 'primary.dark', '&:hover': { bgcolor: 'grey.100' } }}
                 >
                     {t.bookThisTreatment}
-                </button>
-            </div>
-        </div>
+                </Button>
+            </Box>
+        </Card>
     );
 };
 

@@ -3,8 +3,18 @@ import React, { useState, useRef, useEffect } from 'react';
 import { GoogleGenAI } from "@google/genai";
 import { useTranslations } from '../hooks/useTranslations';
 import { systemInstruction } from '../locales/prompts';
-import { SendIcon, UserIcon, SparklesIcon } from './common/Icons';
 import Typewriter from './common/Typewriter';
+import Box from '@mui/material/Box';
+import Container from '@mui/material/Container';
+import Typography from '@mui/material/Typography';
+import Paper from '@mui/material/Paper';
+import TextField from '@mui/material/TextField';
+import IconButton from '@mui/material/IconButton';
+import Chip from '@mui/material/Chip';
+import Avatar from '@mui/material/Avatar';
+import SendIcon from '@mui/icons-material/Send';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
+import PersonIcon from '@mui/icons-material/Person';
 
 interface Message {
     sender: 'user' | 'ai';
@@ -20,8 +30,6 @@ const AiAdvisor: React.FC = () => {
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        // Only trigger scroll if there are actual messages to show
-        // This naturally prevents auto-scrolling on initial mount and handles React 18 Strict Mode double-mounts.
         if (messages.length > 0) {
             messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
         }
@@ -72,11 +80,10 @@ const AiAdvisor: React.FC = () => {
 
         } catch (err) {
             console.error("AI Advisor Error:", err);
-            const errorMessage = t.aiError;
+            const errorMessage = t.aiError as string;
             setError(errorMessage);
             setMessages(prev => {
                 const newMessages = [...prev];
-                // Find the last AI message (which should be the empty one) and update it with the error.
                 const lastAiMessageIndex = newMessages.map(m => m.sender).lastIndexOf('ai');
                 if(lastAiMessageIndex !== -1) {
                     newMessages[lastAiMessageIndex].text = errorMessage;
@@ -104,44 +111,50 @@ const AiAdvisor: React.FC = () => {
     ].filter(Boolean);
 
     return (
-        <section id="ai-advisor" className="py-16 md:py-24 bg-[#FDF5E6]">
-            <div className="container mx-auto px-4 sm:px-6">
-                <h2 className="text-4xl md:text-5xl font-bold text-center text-[#78350F] font-playfair mb-4">
+        <Box id="ai-advisor" component="section" sx={{ py: { xs: 8, md: 12 }, bgcolor: '#FDF5E6' }}>
+            <Container maxWidth="lg">
+                <Typography variant="h2" align="center" sx={{ fontFamily: '"Playfair Display", serif', fontWeight: 700, color: 'primary.dark', mb: 2 }}>
                     {t.aiAdvisorTitle}
-                </h2>
-                <p className="text-center text-[#5D4037] mb-12 max-w-2xl mx-auto">{t.aiAdvisorSubtitle}</p>
-                
-                <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-lg border border-stone-200">
-                    <div className="p-4 sm:p-6 h-96 overflow-y-auto space-y-4 custom-scrollbar">
+                </Typography>
+                <Typography align="center" color="text.secondary" sx={{ mb: 6, maxWidth: 640, mx: 'auto' }}>
+                    {t.aiAdvisorSubtitle}
+                </Typography>
+
+                <Paper elevation={3} sx={{ maxWidth: 672, mx: 'auto', borderRadius: 3, overflow: 'hidden', border: '1px solid', borderColor: 'divider' }}>
+                    {/* Messages Area */}
+                    <Box className="custom-scrollbar" sx={{ p: { xs: 2, sm: 3 }, height: 384, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 2 }}>
                         {messages.length === 0 && !isLoading && (
-                            <div className="flex flex-col items-center justify-center h-full text-center text-stone-500">
-                                 <SparklesIcon className="w-12 h-12 mb-4 text-[#E29578]/50"/>
-                                 <p className="font-medium">{t.aiWelcomeMessage}</p>
-                                 <p className="text-sm">{t.aiWelcomeExample}</p>
-                                 <div className="mt-6 flex flex-wrap justify-center gap-2">
-                                     {suggestions.map((text, i) => (
-                                         <button
-                                             key={i}
-                                             onClick={() => handleSuggestionClick(text as string)}
-                                             className="px-3 py-1.5 bg-stone-100/80 text-stone-700 rounded-full text-xs hover:bg-stone-200/90 transition-colors border border-stone-200"
-                                             aria-label={`Ask: ${text}`}
-                                         >
-                                             {text}
-                                         </button>
-                                     ))}
-                                 </div>
-                            </div>
+                            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', textAlign: 'center', color: 'text.disabled' }}>
+                                <AutoAwesomeIcon sx={{ fontSize: 48, mb: 2, color: 'rgba(226, 149, 120, 0.5)' }} />
+                                <Typography fontWeight={500}>{t.aiWelcomeMessage}</Typography>
+                                <Typography variant="body2">{t.aiWelcomeExample}</Typography>
+                                <Box sx={{ mt: 3, display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 1 }}>
+                                    {suggestions.map((text, i) => (
+                                        <Chip
+                                            key={i}
+                                            label={text}
+                                            variant="outlined"
+                                            onClick={() => handleSuggestionClick(text as string)}
+                                            sx={{ cursor: 'pointer', '&:hover': { bgcolor: 'grey.100' } }}
+                                        />
+                                    ))}
+                                </Box>
+                            </Box>
                         )}
                         {messages.map((msg, index) => (
-                            <div key={index} className={`flex items-start gap-3 animate-fade-in ${msg.sender === 'user' ? 'justify-end' : ''}`}>
-                                {msg.sender === 'ai' && <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#E29578] flex items-center justify-center text-white"><SparklesIcon className="w-5 h-5"/></div>}
-                                <div className={`max-w-md p-3 rounded-lg ${msg.sender === 'user' ? 'bg-[#FEF3EF] text-[#78350F]' : 'bg-stone-100 text-[#5D4037]'}`}>
+                            <Box key={index} sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5, justifyContent: msg.sender === 'user' ? 'flex-end' : 'flex-start' }}>
+                                {msg.sender === 'ai' && (
+                                    <Avatar sx={{ width: 32, height: 32, bgcolor: 'primary.main' }}>
+                                        <AutoAwesomeIcon sx={{ fontSize: 18 }} />
+                                    </Avatar>
+                                )}
+                                <Box sx={{ maxWidth: '75%', px: 2, py: 1.5, borderRadius: 2, bgcolor: msg.sender === 'user' ? '#FEF3EF' : 'grey.100', color: msg.sender === 'user' ? 'primary.dark' : 'text.secondary' }}>
                                     {msg.sender === 'ai' && !msg.text && isLoading ? (
-                                        <div className="flex items-center space-x-1 py-1">
-                                            <span className="w-1.5 h-1.5 bg-stone-400 rounded-full animate-pulse [animation-delay:-0.3s]"></span>
-                                            <span className="w-1.5 h-1.5 bg-stone-400 rounded-full animate-pulse [animation-delay:-0.15s]"></span>
-                                            <span className="w-1.5 h-1.5 bg-stone-400 rounded-full animate-pulse"></span>
-                                        </div>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, py: 0.5 }}>
+                                            {[0, 1, 2].map(i => (
+                                                <Box key={i} sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: 'text.disabled', animation: 'pulse 1.4s infinite', animationDelay: `${i * 0.15}s`, '@keyframes pulse': { '0%, 100%': { opacity: 0.4 }, '50%': { opacity: 1 } } }} />
+                                            ))}
+                                        </Box>
                                     ) : (
                                         <Typewriter 
                                             text={msg.text} 
@@ -151,38 +164,50 @@ const AiAdvisor: React.FC = () => {
                                             onType={() => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })}
                                         />
                                     )}
-                                </div>
-                                {msg.sender === 'user' && <div className="flex-shrink-0 w-8 h-8 rounded-full bg-stone-200 flex items-center justify-center text-stone-600"><UserIcon className="w-5 h-5"/></div>}
-                            </div>
+                                </Box>
+                                {msg.sender === 'user' && (
+                                    <Avatar sx={{ width: 32, height: 32, bgcolor: 'grey.300' }}>
+                                        <PersonIcon sx={{ fontSize: 18, color: 'text.secondary' }} />
+                                    </Avatar>
+                                )}
+                            </Box>
                         ))}
-                         <div ref={messagesEndRef} />
+                        <Box ref={messagesEndRef} />
+                    </Box>
 
-                    </div>
-                    <div className="p-4 sm:p-6 border-t border-stone-200">
-                        <form onSubmit={handleSubmit} className="flex items-center gap-3">
-                            <input
-                                type="text"
+                    {/* Input Area */}
+                    <Box sx={{ p: { xs: 2, sm: 3 }, borderTop: '1px solid', borderColor: 'divider' }}>
+                        <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                            <TextField
+                                fullWidth
+                                size="small"
                                 value={input}
                                 onChange={e => setInput(e.target.value)}
                                 placeholder={t.aiInputPlaceholder as string}
-                                className="w-full bg-stone-100 border border-stone-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-[#E29578]/50 focus:border-[#E29578] outline-none transition"
                                 disabled={isLoading}
                                 aria-label="Your skincare question"
+                                variant="outlined"
+                                sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
                             />
-                            <button
+                            <IconButton
                                 type="submit"
                                 disabled={isLoading || !input.trim()}
-                                className="bg-[#E29578] text-white p-3 rounded-full shadow-md transition-all duration-300 transform hover:-translate-y-0.5 hover:shadow-lg hover:bg-[#D88468] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#E29578] disabled:bg-stone-300 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none"
                                 aria-label="Send message"
+                                sx={{
+                                    bgcolor: 'primary.main',
+                                    color: 'common.white',
+                                    '&:hover': { bgcolor: 'primary.dark' },
+                                    '&.Mui-disabled': { bgcolor: 'grey.300', color: 'grey.500' },
+                                }}
                             >
-                                <SendIcon className="w-5 h-5"/>
-                            </button>
-                        </form>
-                        {error && <p className="text-red-600 text-xs mt-2 text-center">{error}</p>}
-                    </div>
-                </div>
-            </div>
-        </section>
+                                <SendIcon sx={{ fontSize: 20 }} />
+                            </IconButton>
+                        </Box>
+                        {error && <Typography color="error" variant="caption" align="center" sx={{ display: 'block', mt: 1 }}>{error}</Typography>}
+                    </Box>
+                </Paper>
+            </Container>
+        </Box>
     );
 };
 

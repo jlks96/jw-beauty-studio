@@ -1,6 +1,9 @@
 
 import React, { useEffect } from 'react';
 import { useTranslations } from '../hooks/useTranslations';
+import Box from '@mui/material/Box';
+import Container from '@mui/material/Container';
+import Typography from '@mui/material/Typography';
 
 const Reviews: React.FC = () => {
     const t = useTranslations();
@@ -9,18 +12,15 @@ const Reviews: React.FC = () => {
     const widgetDivId = "shapo-widget-c1f5a102570c434bb845";
 
     useEffect(() => {
-        // Check if the main script is already added to prevent duplicates
         if (document.getElementById(embedScriptId)) {
             return;
         }
 
-        // The schema script tag needs to exist for the embed script to populate it.
         const schemaScript = document.createElement('script');
         schemaScript.id = schemaScriptId;
         schemaScript.type = 'application/ld+json';
         document.head.appendChild(schemaScript);
 
-        // The main embed script that powers the widget.
         const embedScript = document.createElement('script');
         embedScript.id = embedScriptId;
         embedScript.src = "https://cdn.shapo.io/js/embed.js";
@@ -28,7 +28,6 @@ const Reviews: React.FC = () => {
         embedScript.defer = true;
         document.head.appendChild(embedScript);
 
-        // Cleanup function to remove the scripts when the component unmounts.
         return () => {
             const existingEmbedScript = document.getElementById(embedScriptId);
             const existingSchemaScript = document.getElementById(schemaScriptId);
@@ -39,18 +38,18 @@ const Reviews: React.FC = () => {
                 existingSchemaScript.remove();
             }
         };
-    }, []); // The empty dependency array ensures this effect runs only once on mount.
+    }, []);
 
     return (
-        <section id="google-reviews" className="py-12 md:py-16 bg-[#FDF5E6]">
-            <div className="container mx-auto px-4 sm:px-6">
-                <h2 className="text-4xl md:text-5xl font-bold text-center text-[#78350F] font-playfair mb-10">
+        <Box id="google-reviews" component="section" sx={{ py: { xs: 6, md: 8 }, bgcolor: '#FDF5E6' }}>
+            <Container maxWidth="lg">
+                <Typography variant="h2" align="center" sx={{ fontFamily: '"Playfair Display", serif', fontWeight: 700, color: 'primary.dark', mb: 5 }}>
                     {t.reviewsTitle}
-                </h2>
+                </Typography>
                 {/* The Shapo script will find this div by its ID and populate it with the reviews widget. */}
-                <div id={widgetDivId}></div>
-            </div>
-        </section>
+                <Box id={widgetDivId} />
+            </Container>
+        </Box>
     );
 };
 

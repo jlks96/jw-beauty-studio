@@ -3,6 +3,10 @@ import React from 'react';
 import { useTranslations } from '../hooks/useTranslations';
 import { services } from '../constants';
 import ServiceCard from './ServiceCard';
+import Box from '@mui/material/Box';
+import Container from '@mui/material/Container';
+import Typography from '@mui/material/Typography';
+import Grid from '@mui/material/Grid';
 
 interface ServicesProps {
     onBookService: (serviceId: string) => void;
@@ -12,18 +16,20 @@ const Services: React.FC<ServicesProps> = ({ onBookService }) => {
     const t = useTranslations();
 
     return (
-        <section id="services" className="py-16 md:py-24 bg-[#FDF5E6]">
-            <div className="container mx-auto px-4 sm:px-6">
-                <h2 className="text-4xl md:text-5xl font-bold text-center text-[#78350F] font-playfair mb-16">
+        <Box id="services" component="section" sx={{ py: { xs: 8, md: 12 }, bgcolor: '#FDF5E6' }}>
+            <Container maxWidth="lg">
+                <Typography variant="h2" align="center" sx={{ fontWeight: 'bold', color: 'primary.dark', mb: 8, fontFamily: '"Playfair Display", serif' }}>
                     {t.servicesTitle}
-                </h2>
-                <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
+                </Typography>
+                <Grid container spacing={4}>
                     {services.map(service => (
-                        <ServiceCard key={service.id} service={service} onBookService={onBookService} />
+                        <Grid size={{ xs: 12, md: service.colSpan?.includes('lg:col-span-3') ? 12 : 6, lg: service.colSpan?.includes('lg:col-span-3') ? 12 : 4 }} key={service.id}>
+                            <ServiceCard service={service} onBookService={onBookService} />
+                        </Grid>
                     ))}
-                </div>
-            </div>
-        </section>
+                </Grid>
+            </Container>
+        </Box>
     );
 };
 

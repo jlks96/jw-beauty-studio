@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useLanguage } from './context/LanguageContext';
 import { useTranslations } from './hooks/useTranslations';
+import Box from '@mui/material/Box';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import PromoBanner from './components/PromoBanner';
@@ -56,7 +57,7 @@ const App: React.FC = () => {
 
 
     const showModalAlert = useCallback((messageKey: string) => {
-        const message = t[messageKey as keyof typeof t] || "An unexpected error occurred.";
+        const message = (t[messageKey as keyof typeof t] || "An unexpected error occurred.") as string;
         setModalMessage(message);
         setIsModalOpen(true);
     }, [t]);
@@ -81,7 +82,14 @@ const App: React.FC = () => {
     };
     
     return (
-        <div className={`bg-[#FFFBF5] text-[#5D4037] ${t.appFontClass}`}>
+        <Box 
+            sx={{ 
+                bgcolor: 'background.default', 
+                color: 'text.primary', 
+                minHeight: '100vh' 
+            }} 
+            className={t.appFontClass as string}
+        >
             <Header isNavVisible={isNavVisible} scrollToSection={scrollToSection} />
             <main>
                 <Hero scrollToSection={scrollToSection} />
@@ -105,9 +113,9 @@ const App: React.FC = () => {
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 message={modalMessage}
-                buttonText={t.modalOkButton}
+                buttonText={t.modalOkButton as string}
             />
-        </div>
+        </Box>
     );
 };
 

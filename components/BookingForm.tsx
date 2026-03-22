@@ -4,7 +4,16 @@ import { useTranslations } from '../hooks/useTranslations';
 import { GOOGLE_APP_SCRIPT_URL, STUDIO_WHATSAPP_NUMBER, services } from '../constants';
 import { CtaButton } from './common/CtaButton';
 import Calendar from './common/Calendar';
-import { CalendarIcon } from './common/Icons';
+import Box from '@mui/material/Box';
+import Container from '@mui/material/Container';
+import Typography from '@mui/material/Typography';
+import Paper from '@mui/material/Paper';
+import TextField from '@mui/material/TextField';
+import MenuItem from '@mui/material/MenuItem';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import ToggleButton from '@mui/material/ToggleButton';
+import IconButton from '@mui/material/IconButton';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 
 interface BookingFormProps {
     showModalAlert: (messageKey: string) => void;
@@ -29,7 +38,6 @@ const getTodayString = () => {
     return `${yyyy}-${mm}-${dd}`;
 };
 
-
 const BookingForm: React.FC<BookingFormProps> = ({ showModalAlert, setIsLoading, initialServiceId, setInitialServiceId }) => {
     const t = useTranslations();
     const [formState, setFormState] = useState<FormState>({
@@ -47,10 +55,8 @@ const BookingForm: React.FC<BookingFormProps> = ({ showModalAlert, setIsLoading,
         if (initialServiceId) {
             const serviceToSelect = services.find(s => s.id === initialServiceId);
             if (serviceToSelect) {
-                const serviceTitle = t[serviceToSelect.titleKey as keyof typeof t];
+                const serviceTitle = t[serviceToSelect.titleKey as keyof typeof t] as string;
                 setFormState(prevState => ({ ...prevState, service: serviceTitle }));
-                // Reset the initial service ID so it doesn't re-trigger on re-renders,
-                // and allows the user to change their selection manually.
                 setInitialServiceId('');
             }
         }
@@ -68,9 +74,13 @@ const BookingForm: React.FC<BookingFormProps> = ({ showModalAlert, setIsLoading,
         };
     }, []);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setFormState(prevState => ({ ...prevState, [name]: value }));
+    };
+
+    const handleSelectChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        setFormState(prevState => ({ ...prevState, service: e.target.value }));
     };
 
     const handleDateSelect = (date: string) => {
@@ -79,7 +89,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ showModalAlert, setIsLoading,
     };
 
     const setFormFeedback = (key: string, color: string) => {
-        setFeedback({ message: t[key as keyof typeof t], color });
+        setFeedback({ message: t[key as keyof typeof t] as string, color });
     };
 
     const timeOptions = [
@@ -98,10 +108,9 @@ const BookingForm: React.FC<BookingFormProps> = ({ showModalAlert, setIsLoading,
     const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setIsLoading(true);
-        setFormFeedback('feedbackProcessing', 'text-yellow-600');
+        setFormFeedback('feedbackProcessing', 'warning.main');
 
         try {
-            // Fire-and-forget request to Google Sheet
             const sheetData = {
                 timestamp: new Date().toLocaleString('en-SG', { timeZone: 'Asia/Singapore' }),
                 ...formState
@@ -112,15 +121,13 @@ const BookingForm: React.FC<BookingFormProps> = ({ showModalAlert, setIsLoading,
                 body: JSON.stringify(sheetData),
             }).catch(err => console.error("Google Sheet fetch (no-cors) error:", err));
             
-            setFormFeedback('feedbackSpreadsheetSent', 'text-green-600');
+            setFormFeedback('feedbackSpreadsheetSent', 'success.main');
 
-            // Find the selected date and time's translated text for the message
             const selectedDate = new Date(`${formState.date}T00:00:00`);
             const dateLocale = t.dateLocale as string;
             const selectedDateText = new Intl.DateTimeFormat(dateLocale, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }).format(selectedDate);
             const selectedTimeText = timeOptions.find(opt => opt.key === formState.time)?.fullText || formState.time;
 
-            // Prepare and open WhatsApp
             const studioName = t.contactStudioName as string;
             let msg = t.whatsappMessageTemplate as string;
             
@@ -129,8 +136,8 @@ const BookingForm: React.FC<BookingFormProps> = ({ showModalAlert, setIsLoading,
                 '%name%': formState.name,
                 '%phone%': formState.phone,
                 '%service%': formState.service,
-                '%date%': selectedDateText,
-                '%time%': selectedTimeText
+                '%date%': selectedDateText as string,
+                '%time%': selectedTimeText as string,
             };
 
             Object.entries(replacements).forEach(([key, value]) => {
@@ -141,7 +148,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ showModalAlert, setIsLoading,
             window.open(whatsappUrl, '_blank');
 
             setTimeout(() => {
-                setFormFeedback('feedbackWhatsAppReady', 'text-green-600');
+                setFormFeedback('feedbackWhatsAppReady', 'success.main');
                 showModalAlert('alertRequestSent');
                 setFormState({ 
                     name: '', 
@@ -161,108 +168,140 @@ const BookingForm: React.FC<BookingFormProps> = ({ showModalAlert, setIsLoading,
     };
 
     const serviceOptions = [
-      ...services.map(s => ({ value: t[s.titleKey as keyof typeof t], key: s.id })),
-      { value: t.formServiceOptionNotSure, key: 'not-sure' },
+      ...services.map(s => ({ value: t[s.titleKey as keyof typeof t] as string, key: s.id })),
+      { value: t.formServiceOptionNotSure as string, key: 'not-sure' },
     ];
 
     return (
-        <section id="booking" className="py-16 md:py-24 bg-stone-200">
-            <div className="container mx-auto px-4 sm:px-6">
-                <h2 className="text-4xl md:text-5xl font-bold text-center text-[#78350F] font-playfair mb-12">
+        <Box id="booking" component="section" sx={{ py: { xs: 8, md: 12 }, bgcolor: 'grey.200' }}>
+            <Container maxWidth="lg">
+                <Typography variant="h2" align="center" sx={{ fontFamily: '"Playfair Display", serif', fontWeight: 700, color: 'primary.dark', mb: 6 }}>
                     {t.bookingTitle}
-                </h2>
-                <form onSubmit={handleFormSubmit} className="max-w-xl mx-auto bg-white p-8 md:p-10 rounded-xl shadow-2xl">
-                    <div className="grid md:grid-cols-2 gap-x-6 gap-y-5 mb-5">
-                        <div>
-                            <label htmlFor="name" className="block text-[#5D4037] font-medium mb-1 text-sm">{t.formName}</label>
-                            <input type="text" id="name" name="name" value={formState.name} onChange={handleChange} className="w-full bg-white border border-stone-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-[#E29578]/50 focus:border-[#E29578] outline-none" required placeholder={t.formNamePlaceholder as string} />
-                        </div>
-                        <div>
-                            <label htmlFor="phone" className="block text-[#5D4037] font-medium mb-1 text-sm">{t.formPhone}</label>
-                            <input type="tel" id="phone" name="phone" value={formState.phone} onChange={handleChange} className="w-full bg-white border border-stone-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-[#E29578]/50 focus:border-[#E29578] outline-none" required placeholder={t.formPhonePlaceholder as string} />
-                        </div>
-                    </div>
-                    
-                    <div className="mb-5">
-                         <label htmlFor="service" className="block text-[#5D4037] font-medium mb-1 text-sm">{t.formService}</label>
-                         <div className="relative">
-                            <select
-                                id="service"
-                                name="service"
-                                value={formState.service}
-                                onChange={handleChange}
-                                className="w-full bg-white border border-stone-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-[#E29578]/50 focus:border-[#E29578] outline-none appearance-none"
-                                required
-                            >
-                                <option value="" disabled>{t.formServiceOptionDefault}</option>
-                                {serviceOptions.map(opt => (
-                                    <option key={opt.key} value={opt.value}>{opt.value}</option>
-                                ))}
-                            </select>
-                             <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-stone-700">
-                                 <svg className="fill-current h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
-                             </div>
-                         </div>
-                    </div>
+                </Typography>
+                <Paper
+                    component="form"
+                    onSubmit={handleFormSubmit}
+                    elevation={6}
+                    sx={{ maxWidth: 600, mx: 'auto', p: { xs: 4, md: 5 }, borderRadius: 3 }}
+                >
+                    <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2.5, mb: 2.5 }}>
+                        <TextField
+                            label={t.formName}
+                            name="name"
+                            value={formState.name}
+                            onChange={handleChange}
+                            required
+                            fullWidth
+                            placeholder={t.formNamePlaceholder as string}
+                            variant="outlined"
+                            size="small"
+                        />
+                        <TextField
+                            label={t.formPhone}
+                            name="phone"
+                            type="tel"
+                            value={formState.phone}
+                            onChange={handleChange}
+                            required
+                            fullWidth
+                            placeholder={t.formPhonePlaceholder as string}
+                            variant="outlined"
+                            size="small"
+                        />
+                    </Box>
 
-                     <div className="mb-5 relative" ref={calendarRef}>
-                        <label className="block text-[#5D4037] font-medium mb-2 text-sm">{t.formDate}</label>
-                        <button
-                            type="button"
+                    <TextField
+                        select
+                        label={t.formService}
+                        name="service"
+                        value={formState.service}
+                        onChange={handleSelectChange}
+                        required
+                        fullWidth
+                        variant="outlined"
+                        size="small"
+                        sx={{ mb: 2.5 }}
+                    >
+                        <MenuItem value="" disabled>{t.formServiceOptionDefault}</MenuItem>
+                        {serviceOptions.map(opt => (
+                            <MenuItem key={opt.key} value={opt.value}>{opt.value}</MenuItem>
+                        ))}
+                    </TextField>
+
+                    <Box ref={calendarRef} sx={{ mb: 2.5, position: 'relative' }}>
+                        <Typography variant="body2" sx={{ fontWeight: 500, color: 'text.secondary', mb: 1 }}>
+                            {t.formDate}
+                        </Typography>
+                        <Box
                             onClick={() => setIsCalendarOpen(prev => !prev)}
-                            className="w-full bg-white border border-stone-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-[#E29578]/50 focus:border-[#E29578] outline-none flex justify-between items-center text-left"
+                            sx={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                border: '1px solid',
+                                borderColor: 'divider',
+                                borderRadius: 2,
+                                px: 2,
+                                py: 1.5,
+                                cursor: 'pointer',
+                                '&:hover': { borderColor: 'text.primary' }
+                            }}
                         >
-                            <span>{formatDateForDisplay(formState.date)}</span>
-                            <CalendarIcon className="h-5 w-5 text-stone-500" />
-                        </button>
+                            <Typography>{formatDateForDisplay(formState.date)}</Typography>
+                            <CalendarMonthIcon sx={{ color: 'text.disabled' }} />
+                        </Box>
                         {isCalendarOpen && (
-                            <div className="absolute z-10 top-full mt-2 w-full shadow-lg rounded-lg animate-fade-in-up">
-
+                            <Box sx={{ position: 'absolute', zIndex: 10, top: '100%', mt: 1, width: '100%', boxShadow: 4, borderRadius: 2, overflow: 'hidden' }}>
                                 <Calendar 
                                     selectedDate={formState.date}
                                     onDateSelect={handleDateSelect}
                                 />
-                            </div>
+                            </Box>
                         )}
-                    </div>
-                    
-                    <fieldset className="mb-6">
-                        <legend className="block text-[#5D4037] font-medium mb-2 text-sm">{t.formTime}</legend>
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                            {timeOptions.map(opt => (
-                                <div key={opt.key}>
-                                    <input
-                                        type="radio"
-                                        id={`time_${opt.key}`}
-                                        name="time"
-                                        value={opt.key}
-                                        checked={formState.time === opt.key}
-                                        onChange={handleChange}
-                                        className="sr-only peer"
-                                        required
-                                    />
-                                    <label
-                                        htmlFor={`time_${opt.key}`}
-                                        className="flex items-center justify-center text-center h-full w-full px-2 py-3.5 rounded-lg border text-sm transition-all duration-200 cursor-pointer border-stone-300 bg-white peer-checked:border-[#E29578] peer-checked:bg-[#FEF3EF] peer-checked:text-[#9F5440] peer-checked:font-semibold peer-checked:shadow-sm hover:border-[#E29578]"
-                                    >
-                                        <span>{opt.text}</span>
-                                    </label>
-                                </div>
-                            ))}
-                        </div>
-                    </fieldset>
+                    </Box>
 
-                    <div className="text-center">
-                        <CtaButton type="submit" className="w-full">
+                    <Box sx={{ mb: 3 }}>
+                        <Typography variant="body2" sx={{ fontWeight: 500, color: 'text.secondary', mb: 1 }}>
+                            {t.formTime}
+                        </Typography>
+                        <ToggleButtonGroup
+                            value={formState.time}
+                            exclusive
+                            onChange={(_e, val) => { if (val !== null) setFormState(prev => ({ ...prev, time: val })); }}
+                            fullWidth
+                            sx={{ gap: 1 }}
+                        >
+                            {timeOptions.map(opt => (
+                                <ToggleButton
+                                    key={opt.key}
+                                    value={opt.key}
+                                    sx={{
+                                        borderRadius: 2,
+                                        border: '1px solid',
+                                        borderColor: 'divider',
+                                        textTransform: 'none',
+                                        '&.Mui-selected': { bgcolor: '#FEF3EF', color: 'primary.main', borderColor: 'primary.main', fontWeight: 600 },
+                                    }}
+                                >
+                                    {opt.text}
+                                </ToggleButton>
+                            ))}
+                        </ToggleButtonGroup>
+                    </Box>
+
+                    <Box sx={{ textAlign: 'center' }}>
+                        <CtaButton type="submit" fullWidth>
                             {t.formSubmitButton}
                         </CtaButton>
-                    </div>
+                    </Box>
                     {feedback && (
-                        <p className={`text-center mt-4 text-sm ${feedback.color}`}>{feedback.message}</p>
+                        <Typography align="center" variant="body2" sx={{ mt: 2, color: feedback.color }}>
+                            {feedback.message}
+                        </Typography>
                     )}
-                </form>
-            </div>
-        </section>
+                </Paper>
+            </Container>
+        </Box>
     );
 };
 

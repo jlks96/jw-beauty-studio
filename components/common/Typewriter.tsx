@@ -81,10 +81,21 @@ const Typewriter: React.FC<TypewriterProps> = ({
     }, [text, speed, animate, onType, onComplete, (currentIndex < text.length)]); // Re-run if we need to start or restart the loop
 
     return (
-        <p className={`${className} whitespace-pre-wrap`}>
+        <p className={className} style={{ whiteSpace: 'pre-wrap' }}>
             {displayedText}
             {animate && currentIndex < text.length && (
-                <span className="inline-block w-1.5 h-4 ml-0.5 bg-[#E29578] animate-pulse align-middle" aria-hidden="true" />
+                <span
+                    aria-hidden="true"
+                    style={{
+                        display: 'inline-block',
+                        width: 6,
+                        height: 16,
+                        marginLeft: 2,
+                        backgroundColor: '#E29578',
+                        verticalAlign: 'middle',
+                        animation: 'pulse 1.5s cubic-bezier(0.4,0,0.6,1) infinite',
+                    }}
+                />
             )}
         </p>
     );

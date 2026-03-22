@@ -1,7 +1,11 @@
 
 import React, { useState } from 'react';
-import { ChevronLeftIcon, ChevronRightIcon } from './Icons';
 import { useTranslations } from '../../hooks/useTranslations';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 interface CalendarProps {
     selectedDate: string;
@@ -9,7 +13,7 @@ interface CalendarProps {
 }
 
 const Calendar: React.FC<CalendarProps> = ({ selectedDate, onDateSelect }) => {
-    const t = useTranslations() as any; // Cast to any because calendarDays is added dynamically
+    const t = useTranslations() as any;
     const [currentMonth, setCurrentMonth] = useState(new Date());
 
     const today = new Date();
@@ -21,7 +25,7 @@ const Calendar: React.FC<CalendarProps> = ({ selectedDate, onDateSelect }) => {
 
     const handleDateClick = (day: number) => {
         const newDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day);
-        if (newDate < today) return; // Prevent selecting past dates
+        if (newDate < today) return;
         onDateSelect(formatDate(newDate));
     };
     
@@ -37,17 +41,17 @@ const Calendar: React.FC<CalendarProps> = ({ selectedDate, onDateSelect }) => {
         const locale = t.dateLocale;
 
         return (
-            <div className="flex justify-between items-center mb-4">
-                <button type="button" onClick={() => changeMonth(-1)} className="p-2 rounded-full hover:bg-[#FEF3EF] transition-colors">
-                    <ChevronLeftIcon className="w-5 h-5 text-stone-600" />
-                </button>
-                <h3 className="font-semibold text-stone-700 text-base md:text-lg">
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                <IconButton size="small" onClick={() => changeMonth(-1)} sx={{ '&:hover': { bgcolor: '#FEF3EF' } }}>
+                    <ChevronLeftIcon sx={{ fontSize: 20, color: 'text.secondary' }} />
+                </IconButton>
+                <Typography variant="subtitle1" fontWeight={600} color="text.primary">
                     {new Intl.DateTimeFormat(locale, dateFormat).format(currentMonth)}
-                </h3>
-                <button type="button" onClick={() => changeMonth(1)} className="p-2 rounded-full hover:bg-[#FEF3EF] transition-colors">
-                    <ChevronRightIcon className="w-5 h-5 text-stone-600" />
-                </button>
-            </div>
+                </Typography>
+                <IconButton size="small" onClick={() => changeMonth(1)} sx={{ '&:hover': { bgcolor: '#FEF3EF' } }}>
+                    <ChevronRightIcon sx={{ fontSize: 20, color: 'text.secondary' }} />
+                </IconButton>
+            </Box>
         );
     };
 
@@ -55,9 +59,13 @@ const Calendar: React.FC<CalendarProps> = ({ selectedDate, onDateSelect }) => {
         const days = t.calendarDays as string[];
         
         return (
-            <div className="grid grid-cols-7 text-center text-xs text-stone-500 font-medium mb-2">
-                {days.map(day => <div key={day}>{day}</div>)}
-            </div>
+            <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', textAlign: 'center', mb: 1 }}>
+                {days.map(day => (
+                    <Typography key={day} variant="caption" color="text.disabled" fontWeight={500}>
+                        {day}
+                    </Typography>
+                ))}
+            </Box>
         );
     };
 
@@ -73,7 +81,7 @@ const Calendar: React.FC<CalendarProps> = ({ selectedDate, onDateSelect }) => {
 
         const cells = [...blanks, ...days].map((day, i) => {
             if (day === null) {
-                return <div key={`blank-${i}`} className="p-1"></div>;
+                return <Box key={`blank-${i}`} sx={{ p: 0.5 }} />;
             }
             
             const date = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day);
@@ -82,39 +90,47 @@ const Calendar: React.FC<CalendarProps> = ({ selectedDate, onDateSelect }) => {
             const isSelected = dateString === selectedDate;
             const isToday = formatDate(date) === formatDate(new Date());
 
-            const baseClasses = "w-full aspect-square flex items-center justify-center rounded-full transition-colors text-sm";
-            const disabledClasses = "text-stone-300 cursor-not-allowed";
-            const activeClasses = "hover:bg-[#FEF3EF] cursor-pointer";
-            const todayClasses = "font-bold text-[#E29578] ring-1 ring-[#E29578]";
-            const selectedClasses = "bg-[#E29578] text-white font-semibold shadow-md hover:bg-[#D88468]";
-
             return (
-                <div key={day} className="p-0.5">
-                     <button
+                <Box key={day} sx={{ p: '2px' }}>
+                    <Box
+                        component="button"
                         type="button"
                         onClick={() => handleDateClick(day)}
                         disabled={isPast}
-                        className={`
-                            ${baseClasses}
-                            ${isPast ? disabledClasses : activeClasses}
-                            ${isSelected ? selectedClasses : (isToday ? todayClasses : '')}
-                        `}
+                        sx={{
+                            width: '100%',
+                            aspectRatio: '1',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            borderRadius: '50%',
+                            border: 'none',
+                            cursor: isPast ? 'not-allowed' : 'pointer',
+                            transition: 'all 0.2s',
+                            fontSize: '0.875rem',
+                            bgcolor: isSelected ? '#E29578' : 'transparent',
+                            color: isSelected ? 'common.white' : isPast ? 'text.disabled' : 'text.primary',
+                            fontWeight: isSelected || isToday ? 600 : 400,
+                            outline: isToday && !isSelected ? '1px solid #E29578' : 'none',
+                            '&:hover': !isPast && !isSelected ? { bgcolor: '#FEF3EF' } : {},
+                            ...(isSelected && { boxShadow: 2, '&:hover': { bgcolor: '#D88468' } }),
+                        }}
                     >
                         {day}
-                    </button>
-                </div>
+                    </Box>
+                </Box>
             );
         });
 
-        return <div className="grid grid-cols-7">{cells}</div>;
+        return <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)' }}>{cells}</Box>;
     };
 
     return (
-        <div className="bg-white border border-stone-300 rounded-lg p-3 sm:p-4">
+        <Box sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 2, p: { xs: 1.5, sm: 2 } }}>
             {renderHeader()}
             {renderDaysOfWeek()}
             {renderCells()}
-        </div>
+        </Box>
     );
 };
 

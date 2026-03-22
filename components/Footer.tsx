@@ -1,21 +1,39 @@
 
 import React from 'react';
 import { useTranslations } from '../hooks/useTranslations';
+import Box from '@mui/material/Box';
+import Container from '@mui/material/Container';
+import Typography from '@mui/material/Typography';
 
 const Footer: React.FC = () => {
     const t = useTranslations();
     const currentYear = new Date().getFullYear();
 
     return (
-        <footer className="bg-[#D4BFAD] text-[#4E342E] py-10 border-t-2 border-[#E29578]/30">
-            <div className="container mx-auto px-4 sm:px-6 text-center">
-                <p className="text-base">
-                    © {currentYear} <span className="font-playfair text-yellow-900">{t.contactStudioName}</span>. All Rights Reserved.
-                </p>
-                <p className="text-sm mt-2">{t.footerAddress}</p>
-                <p className="text-xs mt-1" dangerouslySetInnerHTML={{ __html: t.footerTagline as string }} />
-            </div>
-        </footer>
+        <Box
+            component="footer"
+            sx={{
+                bgcolor: 'secondary.main',
+                color: 'text.primary',
+                py: 5,
+                borderTop: '2px solid',
+                borderColor: 'rgba(226, 149, 120, 0.3)',
+            }}
+        >
+            <Container maxWidth="lg" sx={{ textAlign: 'center' }}>
+                <Typography variant="body1">
+                    © {currentYear}{' '}
+                    <Box component="span" sx={{ fontFamily: '"Playfair Display", serif', fontWeight: 700, color: '#78350F' }}>
+                        {t.contactStudioName}
+                    </Box>
+                    . All Rights Reserved.
+                </Typography>
+                <Typography variant="body2" sx={{ mt: 1 }}>
+                    {t.footerAddress}
+                </Typography>
+                <Typography variant="caption" sx={{ mt: 0.5, display: 'block' }} dangerouslySetInnerHTML={{ __html: t.footerTagline as string }} />
+            </Container>
+        </Box>
     );
 };
 

@@ -1,5 +1,12 @@
 import React from 'react';
 import { useTranslations } from '../hooks/useTranslations';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import Stack from '@mui/material/Stack';
+import Divider from '@mui/material/Divider';
+import Container from '@mui/material/Container';
+import Paper from '@mui/material/Paper';
 
 interface HeroProps {
   scrollToSection: (sectionId: string) => void;
@@ -18,52 +25,138 @@ const Hero: React.FC<HeroProps> = ({ scrollToSection }) => {
     const videoEmbedSrc = "https://streamable.com/e/fkns65?autoplay=1&muted=1&loop=1&nocontrols=1";
 
     return (
-        <section
+        <Box
             id="home"
-            className="text-white min-h-[60vh] md:min-h-[65vh] lg:min-h-[75vh] flex items-center justify-center py-16 relative overflow-hidden bg-white"
+            component="section"
+            sx={{
+                color: 'common.white',
+                minHeight: { xs: '60vh', md: '65vh', lg: '75vh' },
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                py: 8,
+                position: 'relative',
+                overflow: 'hidden',
+                bgcolor: 'common.white',
+            }}
         >
             {/* Video Background Container */}
-            <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-                <iframe
+            <Box sx={{ position: 'absolute', inset: 0, zIndex: 0, overflow: 'hidden', pointerEvents: 'none' }}>
+                <Box
+                    component="iframe"
                     src={videoEmbedSrc}
                     frameBorder="0"
                     allow="autoplay; fullscreen"
                     title="Promotional Video"
-                    className="absolute top-1/2 left-1/2 min-w-[177.78vh] min-h-[100vh] w-[100vw] h-[56.25vw] max-w-none translate-x-[-50%] translate-y-[-50%] scale-[0.6] sm:scale-[0.7] md:scale-[0.8] lg:scale-[0.95] transform"
+                    sx={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        minWidth: '177.78vh',
+                        minHeight: '100vh',
+                        width: '100vw',
+                        height: '56.25vw',
+                        maxWidth: 'none',
+                        transform: {
+                            xs: 'translate(-50%, -50%) scale(0.6)',
+                            sm: 'translate(-50%, -50%) scale(0.7)',
+                            md: 'translate(-50%, -50%) scale(0.8)',
+                            lg: 'translate(-50%, -50%) scale(0.95)',
+                        },
+                    }}
                 />
-            </div>
+            </Box>
+
             {/* Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent z-10"></div>
+            <Box
+                sx={{
+                    position: 'absolute',
+                    inset: 0,
+                    background: 'linear-gradient(to top, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.3) 50%, transparent 100%)',
+                    zIndex: 1,
+                }}
+            />
 
-            <div className="container mx-auto px-4 sm:px-6 text-center relative z-20">
-                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold font-playfair mb-4" style={{ textShadow: '0 2px 10px rgba(0,0,0,0.7)' }}>
+            <Container maxWidth="lg" sx={{ textAlign: 'center', position: 'relative', zIndex: 2 }}>
+                <Typography
+                    variant="h2"
+                    component="h1"
+                    sx={{
+                        fontFamily: '"Playfair Display", serif',
+                        fontWeight: 700,
+                        color: 'common.white',
+                        mb: 2,
+                        textShadow: '0 2px 10px rgba(0,0,0,0.7)',
+                        fontSize: { xs: '2.25rem', md: '3.75rem', lg: '4.5rem' },
+                    }}
+                >
                     {t.heroTitle}
-                </h1>
-                <p className="text-lg md:text-xl lg:text-2xl max-w-3xl mx-auto mb-8" style={{ textShadow: '0 1px 5px rgba(0,0,0,0.7)' }}>
+                </Typography>
+                
+                <Typography
+                    variant="h5"
+                    sx={{
+                        maxWidth: '800px',
+                        mx: 'auto',
+                        mb: 4,
+                        color: 'common.white',
+                        textShadow: '0 1px 5px rgba(0,0,0,0.7)',
+                        fontSize: { xs: '1.125rem', md: '1.25rem', lg: '1.5rem' },
+                    }}
+                >
                     {t.heroSubtitle}
-                </p>
+                </Typography>
 
-                <div className="flex justify-center items-center space-x-4 mb-10">
-                    <button
+                <Box sx={{ display: 'flex', justifyContent: 'center', mb: 10 }}>
+                    <Button
+                        variant="contained"
+                        size="large"
                         onClick={() => scrollToSection('booking')}
-                        className="bg-white text-[#78350F] px-8 py-3 rounded-lg shadow-md text-sm sm:text-base font-semibold uppercase tracking-wider transition-all duration-300 ease-in-out transform hover:-translate-y-0.5 hover:shadow-lg hover:bg-stone-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-black/50"
+                        sx={{
+                            bgcolor: 'common.white',
+                            color: 'primary.main',
+                            fontWeight: 600,
+                            px: 4,
+                            py: 1.5,
+                            '&:hover': { bgcolor: 'grey.100' },
+                        }}
                     >
                         {t.navBookNow}
-                    </button>
-                </div>
+                    </Button>
+                </Box>
                 
-                <div className="absolute bottom-[-60px] left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-4xl mx-auto">
-                    <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 grid grid-cols-3 divide-x divide-white/20 text-center shadow-lg">
-                        {stats.map(stat => (
-                            <div key={stat.label} className="px-2">
-                                <p className="text-xl sm:text-2xl md:text-3xl font-bold">{stat.value}</p>
-                                <p className="text-xs sm:text-sm text-stone-200">{stat.label}</p>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </div>
-        </section>
+                <Box sx={{ position: 'absolute', bottom: -60, left: '50%', transform: 'translateX(-50%)', width: 'calc(100% - 2rem)', maxWidth: '900px', mx: 'auto' }}>
+                    <Paper
+                        elevation={4}
+                        sx={{
+                            bgcolor: 'rgba(255, 255, 255, 0.1)',
+                            backdropFilter: 'blur(12px)',
+                            borderRadius: 3,
+                            p: 2,
+                            color: 'common.white',
+                            border: '1px solid rgba(255,255,255,0.2)'
+                        }}
+                    >
+                        <Stack 
+                            direction="row" 
+                            divider={<Divider orientation="vertical" flexItem sx={{ borderColor: 'rgba(255,255,255,0.2)' }} />} 
+                            justifyContent="space-evenly"
+                        >
+                            {stats.map((stat) => (
+                                <Box key={stat.label} sx={{ textAlign: 'center', px: 1, flex: 1 }}>
+                                    <Typography variant="h4" sx={{ fontWeight: 'bold', fontSize: { xs: '1.25rem', md: '2rem' }, color: 'common.white' }}>
+                                        {stat.value}
+                                    </Typography>
+                                    <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.8)', fontSize: { xs: '0.75rem', md: '0.875rem' } }}>
+                                        {stat.label}
+                                    </Typography>
+                                </Box>
+                            ))}
+                        </Stack>
+                    </Paper>
+                </Box>
+            </Container>
+        </Box>
     );
 };
 
