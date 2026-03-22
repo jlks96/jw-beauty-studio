@@ -20,7 +20,11 @@ const AiAdvisor: React.FC = () => {
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        // Only trigger scroll if there are actual messages to show
+        // This naturally prevents auto-scrolling on initial mount and handles React 18 Strict Mode double-mounts.
+        if (messages.length > 0) {
+            messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        }
     }, [messages, isLoading]);
 
     const sendMessage = async (messageText: string) => {
