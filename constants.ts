@@ -3,6 +3,7 @@ import { Service, TranslationSet } from './types';
 
 export const GOOGLE_APP_SCRIPT_URL = process.env.GOOGLE_APP_SCRIPT_URL || '';
 export const STUDIO_WHATSAPP_NUMBER = process.env.STUDIO_WHATSAPP_NUMBER || '';
+export const HERO_VIDEO_URL = process.env.HERO_VIDEO_URL || '';
 
 export const services: Service[] = [
     {

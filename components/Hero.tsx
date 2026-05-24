@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslations } from '../hooks/useTranslations';
+import { HERO_VIDEO_URL } from '../constants';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
@@ -42,29 +43,53 @@ const Hero: React.FC<HeroProps> = ({ scrollToSection }) => {
         >
             {/* Video Background Container */}
             <Box sx={{ position: 'absolute', inset: 0, zIndex: 0, overflow: 'hidden', pointerEvents: 'none' }}>
-                <Box
-                    component="iframe"
-                    src={videoEmbedSrc}
-                    frameBorder="0"
-                    allow="autoplay; fullscreen"
-                    title="Promotional Video"
-                    sx={{
-                        position: 'absolute',
-                        top: '50%',
-                        left: '50%',
-                        minWidth: '177.78vh',
-                        minHeight: '100vh',
-                        width: '100vw',
-                        height: '56.25vw',
-                        maxWidth: 'none',
-                        transform: {
-                            xs: 'translate(-50%, -50%) scale(0.6)',
-                            sm: 'translate(-50%, -50%) scale(0.7)',
-                            md: 'translate(-50%, -50%) scale(0.8)',
-                            lg: 'translate(-50%, -50%) scale(0.95)',
-                        },
-                    }}
-                />
+                {HERO_VIDEO_URL ? (
+                    <Box
+                        component="video"
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        poster="https://i.postimg.cc/3NVkV67g/Whats-App-Image-2025-05-12-at-10-35-29-PM-2.jpg"
+                        sx={{
+                            position: 'absolute',
+                            top: '50%',
+                            left: '50%',
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover',
+                            transform: 'translate(-50%, -50%)',
+                            pointerEvents: 'none',
+                        }}
+                    >
+                        <source src={HERO_VIDEO_URL} type="video/mp4" />
+                        Your browser does not support the video tag.
+                    </Box>
+                ) : (
+                    <Box
+                        component="iframe"
+                        src={videoEmbedSrc}
+                        frameBorder="0"
+                        allow="autoplay; fullscreen"
+                        title="Promotional Video"
+                        sx={{
+                            position: 'absolute',
+                            top: '50%',
+                            left: '50%',
+                            minWidth: '177.78vh',
+                            minHeight: '100vh',
+                            width: '100vw',
+                            height: '56.25vw',
+                            maxWidth: 'none',
+                            transform: {
+                                xs: 'translate(-50%, -50%) scale(0.6)',
+                                sm: 'translate(-50%, -50%) scale(0.7)',
+                                md: 'translate(-50%, -50%) scale(0.8)',
+                                lg: 'translate(-50%, -50%) scale(0.95)',
+                            },
+                        }}
+                    />
+                )}
             </Box>
 
             {/* Overlay */}

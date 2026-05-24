@@ -9,6 +9,7 @@ export default defineConfig(({ mode }) => {
         'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
         'process.env.GOOGLE_APP_SCRIPT_URL': JSON.stringify(env.GOOGLE_APP_SCRIPT_URL),
         'process.env.STUDIO_WHATSAPP_NUMBER': JSON.stringify(env.STUDIO_WHATSAPP_NUMBER),
+        'process.env.HERO_VIDEO_URL': JSON.stringify(env.HERO_VIDEO_URL),
       },
       resolve: {
         alias: {
